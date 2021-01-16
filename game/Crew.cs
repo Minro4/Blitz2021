@@ -42,5 +42,8 @@ namespace Blitz2021
         public List<Position> path;
         public bool isMoving;
         public Position target;
+        
+        //Custom
+        public int futureGold;
     }
 }
