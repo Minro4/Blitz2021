@@ -32,9 +32,15 @@ namespace Blitz2021
                 for (int j = 0; j < gameMessage.map.getMapSize(); j++)
                 {
                     Map.Position pos = new Map.Position(i, j);
-                    if (gameMessage.map.getTileTypeAt(pos) == TileType.WALL || MapManager.isInsideEnnemieBase(gameMessage, pos) || pos.isOccupied(gameMessage))
+
+                    if (gameMessage.map.getTileTypeAt(pos) == TileType.WALL || MapManager.isInsideEnnemieBase(gameMessage, pos))
                     {
-                        grid.DisconnectNode(new GridPosition(i, j));
+                        var positions = gameMessage.getOtherCrews().SelectMany((crew) => crew.units).Select((unit) => unit.position).ToList();
+                        positions.AddRange(gameMessage.getMyCrew().units.Where(u => u.type == Unit.UnitType.MINER).Select((unit) => unit.position).ToList());
+                        if (positions.Contains(pos))
+                        {
+                            grid.DisconnectNode(new GridPosition(i, j));
+                        }
                     }
                 }
             }
@@ -77,6 +83,7 @@ namespace Blitz2021
             {
                 return (int) path.Distance.Meters;
             }
+
             grid.DisconnectNode(new GridPosition(p1.x, p1.y));
 
             return infinity;
@@ -91,12 +98,11 @@ namespace Blitz2021
         }
 
 
-        public static bool isAnyPathAvailable(Map.Position currentPosition, List<Map.Position> availableTile) 
+        public static bool isAnyPathAvailable(Map.Position currentPosition, List<Map.Position> availableTile)
         {
-
-            for (int x=0; x < availableTile.Count; x++) 
+            for (int x = 0; x < availableTile.Count; x++)
             {
-                if (path(currentPosition, availableTile[x]) < 1000) 
+                if (path(currentPosition, availableTile[x]) < 1000)
                 {
                     return true;
                 }
@@ -106,19 +112,19 @@ namespace Blitz2021
         }
 
 
-        public static Map.Position findAvailablePosition(Map.Position currentPosition, List<Map.Position> availableTile) 
+        public static Map.Position findAvailablePosition(Map.Position currentPosition, List<Map.Position> availableTile)
         {
             int min = 0;
             int distance = 0;
-            
-            if (availableTile.Count >0) 
+
+            if (availableTile.Count > 0)
             {
                 distance = path(currentPosition, availableTile[0]);
             }
 
             for (int x = 0; x < availableTile.Count; x++)
             {
-                if (path(currentPosition, availableTile[x]) < distance )
+                if (path(currentPosition, availableTile[x]) < distance)
                 {
                     min = x;
                     distance = path(currentPosition, availableTile[x]);
@@ -126,10 +132,6 @@ namespace Blitz2021
             }
 
             return availableTile[min];
-
         }
-
-
-
     }
 }
