@@ -29,7 +29,7 @@ namespace Blitz2021
             var miners = crew.get(Unit.UnitType.MINER);
             var distances = miners.Select((Unit miner) => Pathfinding.path(crew.homeBase, miner.position));
             var timeCosts = distances.Select(distance => distance * 2);
-            var totalCost = timeCosts.Aggregate(0.0, (acc, x) => acc + x);
+            var totalCost = timeCosts.Aggregate(0, (acc, x) => acc + x);
 
             var carts = crew.get(Unit.UnitType.CART);
 

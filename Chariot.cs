@@ -15,6 +15,7 @@ namespace Blitz2020
         public Position targetPosition;
         public Position targerPickUp;
         public Position basePosition;
+        public Ressource ressource;
 
         public enum State
         {
@@ -30,10 +31,11 @@ namespace Blitz2020
             this.state = State.WAITTING;
         }
 
-        public void setGoal(Position targetPosition, Position targetPickUp)
+        public void setGoal(Position targetPosition, Ressource ressource)
         {
-            this.targerPickUp = targetPickUp;
+            this.targerPickUp = ressource.position;
             this.targetPosition = targetPosition;
+            this.ressource = ressource;
             state = State.TRAVEL;
         }
 
@@ -41,7 +43,19 @@ namespace Blitz2020
         {
             return state == State.WAITTING;
         }
-
+        
+        //Verifies if desired depot was taken
+        public void updateState(GameMessage message)
+        {
+            if (ressource.isPublic && state == State.TRAVEL)
+            {
+                var depot = message.map.depots.ToList().Find(depot => depot.position.Equals(ressource.position));
+                if (depot == null || depot.blitzium == 0)
+                {
+                    state = State.WAITTING;
+                }
+            }
+        }
         public UnitAction selectAction(Unit a, GameMessage message)
         {
             if (state == State.TRAVEL)

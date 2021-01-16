@@ -12,8 +12,11 @@ namespace Blitz2020
 {
     class CartManager
     {
-        private readonly double distanceValueMultiplier = 1;
-        
+        private readonly double distanceValueDiminisher = 30;
+        private readonly int far = 150;
+        private readonly int quantityStackCap = 75;
+        private readonly int isPublicPenalty = 25;
+
         List<Chariot> chariots;
 
         public CartManager()
@@ -25,37 +28,42 @@ namespace Blitz2020
         {
             var karts = message.getMyCrew().get(Unit.UnitType.CART);
             cleanCarts(karts, message);
-            List<UnitAction> cartAction = new List<UnitAction>();
+
             List<Unit> miners = minersManager.getMiningMiners();
+            List<Depot> depots = message.map.depots.ToList();
 
             var travelingChariots = chariots.Where(chariot => chariot.state == Chariot.State.TRAVEL).ToList();
-            var availableMiners = miners.Where(miner =>
+
+            var ressources = miners.Select(Ressource.fromMiner).ToList();
+            ressources.AddRange(depots.Select(Ressource.fromDepot));
+
+            var availableRessources = ressources.Where(ressource =>
             {
-                var travelingTo = travelingChariots.Where(chariot => chariot.targerPickUp.Equals(miner.position)).ToList();
-                var dist = Pathfinding.path(message.getMyCrew().homeBase, miner.position) * distanceValueMultiplier;
-                var minerFutureGold = miner.blitzium + dist;
+                var travelingTo = travelingChariots.Where(chariot => chariot.targerPickUp.Equals(ressource.position)).ToList();
+                var dist = Pathfinding.path(message.getMyCrew().homeBase, ressource.position);
+                var adjustedGold = Math.Min(ressource.blitzium, quantityStackCap) - (ressource.isPublic ? isPublicPenalty : 0);
+                var minerFutureGold = adjustedGold + dist * ressource.growth;
                 minerFutureGold -= travelingTo.Count * 25;
-                miner.value = minerFutureGold;
+                ressource.value = minerFutureGold - ((double) dist / far * distanceValueDiminisher);
                 return minerFutureGold > 0;
             }).ToList();
-            availableMiners = availableMiners.Where(miner =>
+            availableRessources = availableRessources.Where(miner =>
             {
                 return MapManager.getMineableTile(message.map, miner.position).Where(position => !position.isOccupied(message)).Count() != 0;
             }).ToList();
 
-            var sortedMiners = availableMiners.OrderBy(o => -o.value).ToList();
+            var sortedRessources = availableRessources.OrderBy(o => -o.value).ToList();
 
             var waitingChariots = chariots.Where(chariot => chariot.isWaitting()).ToList();
 
-            for (int i = 0; i < waitingChariots.Count() && i < sortedMiners.Count; i++)
+            for (int i = 0; i < waitingChariots.Count() && i < sortedRessources.Count; i++)
             {
-
-                var targetPosition = MapManager.getMineableTile(message.map, sortedMiners[i].position).Where(position => !position.isOccupied(message)).ToList();
-                waitingChariots[i].setGoal(targetPosition[0], sortedMiners[i].position);
+                var targetPosition = MapManager.getMineableTile(message.map, sortedRessources[i].position).Where(position => !position.isOccupied(message))
+                    .ToList();
+                waitingChariots[i].setGoal(targetPosition[0], sortedRessources[i]);
             }
 
-            return chariots.Select(chariot => chariot.selectAction(chariot.findChariot(karts),message)).ToList();
-
+            return chariots.Select(chariot => chariot.selectAction(chariot.findChariot(karts), message)).ToList();
         }
 
         private void cleanCarts(List<Unit> karts, GameMessage message)
@@ -69,6 +77,37 @@ namespace Blitz2020
 
             var newChariots = newKarts.Select(kart => new Chariot(kart.id, message.getMyCrew().homeBase));
             chariots.AddRange(newChariots);
+        }
+    }
+
+    public class Ressource
+    {
+        public Position position;
+        public int blitzium;
+        public int growth;
+        public bool isPublic;
+        public double value;
+
+        public static Ressource fromMiner(Unit miner)
+        {
+            return new Ressource()
+            {
+                position = miner.position,
+                blitzium = miner.blitzium,
+                growth = 1,
+                isPublic = false
+            };
+        }
+
+        public static Ressource fromDepot(Depot depot)
+        {
+            return new Ressource()
+            {
+                position = depot.position,
+                blitzium = depot.blitzium,
+                growth = 0,
+                isPublic = true
+            };
         }
     }
 }
