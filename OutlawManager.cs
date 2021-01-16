@@ -36,10 +36,10 @@ namespace Blitz2020
                        List<Position> posibleTile = MapManager.getMineableTileNotOccupied(message, new Position(ennemie[0].x, ennemie[0].y));
 
 
-
-
-                        outlaws[x].setGoal(posibleTile[0], ennemie[0]);
-                        ennemie.Remove(ennemie[0]);
+                        if (posibleTile.Count > 0) {
+                            outlaws[x].setGoal(posibleTile[0], ennemie[0]);
+                            ennemie.Remove(ennemie[0]);
+                        }
                     }
                 }
             }
