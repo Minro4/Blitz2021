@@ -37,30 +37,6 @@ namespace Blitz2021
                     }
                 }
 
-                if (minerFollower.target != null)
-                {
-                    if (minerFollower.target.isOccupied(gameMessage))
-                    {
-                        Unit miner = new Unit();
-                        miner.position = minerFollower.position;
-                        miner.isMoving = true;
-                        miner.id = minerFollower.id;
-                        miner.target = MapManager.getMineableTileNotOccupied(gameMessage, minerFollower.target)[
-                            getClosestSpotId(MapManager.getMineableTileNotOccupied(gameMessage, minerFollower.target), minerFollower)];
-                        movingMiners.Add(miner);
-                    }
-                    else
-                    {
-                        Unit miner = new Unit();
-                        miner.position = minerFollower.position;
-                        miner.isMoving = true;
-                        miner.id = minerFollower.id;
-                        miner.target = new Position(minerFollower.target.x, minerFollower.target.y);
-                        movingMiners.Add(miner);
-                        minerFollower.target = null;
-                    }
-                }
-
                 miners = movingMiners;
                 actions.AddRange(mine(mines));
                 foreach (Unit miner in miners)
@@ -74,8 +50,17 @@ namespace Blitz2021
                         }
                         else
                         {
-                            miner.target = Blitz2020.Bot.getRandomPosition(gameMessage.map.getMapSize());
-                            miner.inactivity = 0;
+                            var outlaws = gameMessage.getMyCrew().get(Unit.UnitType.OUTLAW);
+                            if (outlaws.Count > 0)
+                            {
+                                var outlaw = outlaws[0];
+                                miner.target = outlaw.position;
+                            }
+                            else
+                            {
+                                miner.target = Blitz2020.Bot.getRandomPosition(gameMessage.map.getMapSize());
+                                miner.inactivity = 0;
+                            }
                         }
                     }
 
@@ -123,19 +108,9 @@ namespace Blitz2021
                 }
                 else
                 {
-                    if (nextIsFollower)
-                    {
-                        minerFollower = miner;
-                        minerFollower.target = followerTarget;
-                        nextIsFollower = false;
-                        miner.inactivity = 0;
-                    }
-                    else
-                    {
-                        miner.isMoving = false;
-                        miner.inactivity = 0;
-                        miners.Add(miner);
-                    }
+                    miner.isMoving = false;
+                    miner.inactivity = 0;
+                    miners.Add(miner);
                 }
             }
 
