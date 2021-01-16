@@ -63,6 +63,9 @@ namespace Blitz2021
         public List<Unit> getMiningMiners(){
             return miningMiners;
         }
+        public List<Unit> getMovingMiners(){
+            return miners;
+        }
         
         private Position getAdjacentMine(List<Position> mines,Unit miner){
             foreach (Position mine in mines){
