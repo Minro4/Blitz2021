@@ -32,7 +32,7 @@ namespace Blitz2020
             var availableMiners = miners.Where(miner =>
             {
                 var travelingTo = travelingChariots.Where(chariot => chariot.targerPickUp.Equals(miner.position)).ToList();
-                var dist = Pathfinding.path(message.getMyCrew().homeBase, miner.position).Count * distanceValueMultiplier;
+                var dist = Pathfinding.path(message.getMyCrew().homeBase, miner.position) * distanceValueMultiplier;
                 var minerFutureGold = miner.blitzium + dist;
                 minerFutureGold -= travelingTo.Count * 25;
                 miner.value = minerFutureGold;

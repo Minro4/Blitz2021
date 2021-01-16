@@ -43,7 +43,7 @@ namespace Blitz2020
 
                 if (state == State.KILL)
                 {
-                    if (targetPosition.Equals(unit.position) || Pathfinding.path(unit.position, targetKilling).Count == 1)
+                    if (targetPosition.Equals(unit.position) || Pathfinding.path(unit.position, targetKilling) == 1)
                     {
                         state = State.RETURN;
                         List<Position> available = MapManager.getMineableTileNotOccupied(message, targetKilling);
@@ -62,7 +62,7 @@ namespace Blitz2020
                 }
                 else if (state == State.WAITTING)
                 {
-                    if (Pathfinding.path(unit.position, targetKilling).Count > 2)
+                    if (Pathfinding.path(unit.position, targetKilling) > 2)
                     {
                         targetPosition = getRandomPosition(message.map.getMapSize());
                         return new UnitAction(UnitActionType.MOVE, id, targetPosition);

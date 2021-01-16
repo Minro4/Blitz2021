@@ -36,6 +36,7 @@ namespace Blitz2020
         */
         public GameCommand nextMove(GameMessage gameMessage)
         {
+            Pathfinding.initialize(gameMessage);
             List<GameCommand.Action> actions = new List<GameCommand.Action>();
             Crew myCrew = gameMessage.getCrewsMapById[gameMessage.crewId];
             int mapSize = gameMessage.map.getMapSize();
