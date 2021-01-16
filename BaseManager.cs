@@ -13,6 +13,8 @@ namespace Blitz2021
         private MinerManager minerManager;
         private bool spawnedOutlaw = false;
 
+        private int miniumBank = 0;
+
         public BaseManager(MapManager mapManager, MinerManager minerManager)
         {
             this.mapManager = mapManager;
@@ -56,9 +58,9 @@ namespace Blitz2021
 
             var minerEfficiency = this.minerEfficiency(message);
 
-            if (!spawnedOutlaw && minerEfficiency < 1 && miners.Count >= 2)
+            if (shouldBuyOutlaw(message, minerEfficiency, miners.Count))
             {
-                if (crew.blitzium >= crew.prices.OUTLAW)
+                if (crew.blitzium >= crew.prices.OUTLAW + miniumBank)
                 {
                     var action = new BuyAction(Unit.UnitType.OUTLAW);
                     actions.Add(action);
@@ -67,7 +69,7 @@ namespace Blitz2021
             }
             else if (minerEfficiency > 1)
             {
-                if (crew.blitzium >= crew.prices.CART)
+                if (crew.blitzium >= crew.prices.CART + miniumBank)
                 {
                     var action = new BuyAction(Unit.UnitType.CART);
                     actions.Add(action);
@@ -75,7 +77,7 @@ namespace Blitz2021
             }
             else
             {
-                if (crew.blitzium >= crew.prices.MINER)
+                if (crew.blitzium >= crew.prices.MINER + miniumBank)
                 {
                     var availableMines = mapManager.getAllMineNotOccupied(message);
                     var mineDistances = availableMines.Select(pos => Pathfinding.path(pos, crew.homeBase)).ToList();
@@ -95,6 +97,15 @@ namespace Blitz2021
             return actions;
         }
 
+        private bool shouldBuyOutlaw(GameMessage message, double minerEfficiency, int nbrMiners)
+        {
+            var nbrAvailableMines = mapManager.getAllMineNotOccupied(message).Count;
+            if (nbrAvailableMines > 0)
+                return (!spawnedOutlaw && minerEfficiency < 1 && nbrMiners >= 3);
+
+            return !spawnedOutlaw && minerEfficiency < 1;
+        }
+
         public int growthRate()
         {
             return this.minerManager.getMiningMiners().Count;
@@ -104,9 +115,13 @@ namespace Blitz2021
         {
             var tickLeft = message.totalTick - message.tick;
             var percent = (double) message.tick / message.totalTick;
-            if (message.getMyCrew().blitzium >= 50 && tickLeft >= 100)
+            if (spawnedOutlaw && message.getMyCrew().blitzium >= 50 && tickLeft >= 100)
+            {
+                miniumBank = 50;
                 return true;
+            }
 
+            miniumBank = 0;
             return false;
         }
     }
