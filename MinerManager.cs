@@ -36,29 +36,31 @@ namespace Blitz2021
                         movingMiners.Add(miner);
                     }
                 }
-
-                /*   if (minerFollower.target != null){
-                       if (minerFollower.target.isOccupied(gameMessage)){
-                           Unit miner = new Unit();
-                           miner.position = minerFollower.position;
-                           miner.isMoving = true;
-                           miner.target = MapManager.getMineableTileNotOccupied(gameMessage,minerFollower.target)[getClosestSpotId(minerFollower)];
-                           movingMiners.Add(miner);
-                       }
-                       else{
-                           movingMiners.Add(minerFollower);
-                           minerFollower.target = null;
-                       }
-                   }*/
+                if (minerFollower.target != null){
+                    if (minerFollower.target.isOccupied(gameMessage)){
+                        Unit miner = new Unit();
+                        miner.position = minerFollower.position;
+                        miner.isMoving = true;
+                        miner.id = minerFollower.id;
+                        miner.target = MapManager.getMineableTileNotOccupied(gameMessage,minerFollower.target)[getClosestSpotId(MapManager.getMineableTileNotOccupied(gameMessage,minerFollower.target),minerFollower)];
+                        movingMiners.Add(miner);
+                    }
+                    else{
+                        Unit miner = new Unit();
+                        miner.position = minerFollower.position;
+                        miner.isMoving = true;
+                        miner.id = minerFollower.id;
+                        miner.target = new Position(minerFollower.target.x,minerFollower.target.y);
+                        movingMiners.Add(miner);
+                        minerFollower.target = null;
+                    }
+                }
                 miners = movingMiners;
                 actions.AddRange(mine(mines));
-                foreach (Unit miner in miners)
-                {
-                    if (!miner.isMoving)
-                    {
-                        if (availableMiningSpots.Count > 0 && miner.inactivity < 2)
-                        {
-                            miner.target = availableMiningSpots[getClosestSpotId(miner)];
+                foreach (Unit miner in miners){
+                    if (!miner.isMoving){
+                        if (availableMiningSpots.Count > 0 && miner.inactivity < 2){
+                            miner.target = availableMiningSpots[getClosestSpotId(availableMiningSpots,miner)];
                             miner.isMoving = true;
                         }
                         else
@@ -161,17 +163,13 @@ namespace Blitz2021
 
             return new Position(0, 0);
         }
-
-        private int getClosestSpotId(Unit miner)
-        {
+        private int getClosestSpotId(List<Position> list,Unit miner){       
             int id = 0;
             int i = 0;
             float minimum = 99999;
-            foreach (Position spot in availableMiningSpots)
-            {
-                float dist = Pathfinding.path(miner.position, spot);
-                if (dist < minimum)
-                {
+            foreach (Position spot in list){
+                float dist = Pathfinding.path(miner.position,spot);
+                if (dist < minimum){
                     id = i;
                     minimum = dist;
                 }

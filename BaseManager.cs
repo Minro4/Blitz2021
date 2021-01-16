@@ -62,8 +62,8 @@ namespace Blitz2021
                 var action = new BuyAction(Unit.UnitType.MINER);
                 actions.Add(action);
                 spawnMinerNext = false;
-            }*/
-            if (shouldBuyOutlaw(message, minerEfficiency, miners.Count))
+            }
+            else if (shouldBuyOutlaw(message, minerEfficiency, miners.Count))
             {
                 if (crew.blitzium >= crew.prices.OUTLAW + miniumBank)
                 {
