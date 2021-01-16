@@ -23,7 +23,7 @@ namespace Blitz2020
         public List<UnitAction> updateOutlaw(GameMessage message, MinerManager minersManager, MapManager mapManager, bool timeKill)
         {
             var newOutlaws = message.getMyCrew().get(Unit.UnitType.OUTLAW);
-            cleanCarts(newOutlaws, message);
+            cleanOutlaws(newOutlaws, message);
             List<UnitAction> cartAction = new List<UnitAction>();
 
             if (timeKill) 
@@ -52,13 +52,13 @@ namespace Blitz2020
 
 
 
-        private void cleanCarts(List<Unit> newOutlaws, GameMessage message)
+        private void cleanOutlaws(List<Unit> newOutlaws, GameMessage message)
         {
             //Remove dead chariots
-            outlaws = outlaws.Where((outlaw) => { return outlaws.Find(outlaw1 => outlaw1.id == outlaw.id) != null; }).ToList();
+            outlaws = outlaws.Where((outlaw) => { return newOutlaws.Find(outlaw1 => outlaw1.id == outlaw.id) != null; }).ToList();
             
             //Add new chariots
-            var newKarts = outlaws.Where((outlaw) => { return outlaws.Find((chariot) => chariot.id == outlaw.id) == null; })
+            var newKarts = newOutlaws.Where((newOutlaw) => { return outlaws.Find((outlaw) => outlaw.id == newOutlaw.id) == null; })
                 .ToList();
 
             var outlawNew = newKarts.Select(outlaw => new Outlaw(outlaw.id));
