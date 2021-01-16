@@ -102,18 +102,17 @@ public class MapManager
         }
     }
 
-
 }
 
 public class Mine
 {
     
     public Position Mines;
-    public List<Position> Minable;
+    public List<Position> Mineable;
     public Mine(int x, int y, List<Position> Mineable)
     {
         this.Mines = new Position(x,y);
-        this.Minable = Mineable;
+        this.Mineable = Mineable;
     }
 
 }
