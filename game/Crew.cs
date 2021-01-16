@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using static Blitz2021.Map;
 
 namespace Blitz2021
@@ -20,6 +21,11 @@ namespace Blitz2021
         public List<Unit> units;
         public List<string> errors;
         public Prices prices;
+
+        public List<Unit> get(Unit.UnitType type)
+        {
+            return units.Where((unit) => type == unit.type).ToList();
+        }
     }
 
     public class Unit

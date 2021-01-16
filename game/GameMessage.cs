@@ -4,7 +4,8 @@ using Blitz2021;
 
 namespace Blitz2020
 {
-    public class Rules {
+    public class Rules
+    {
         public int MAX_MINER_CARGO;
         public int MAX_CART_CARGO;
         public int MAX_MINER_MOVE_CARGO;
@@ -26,6 +27,16 @@ namespace Blitz2020
         public Dictionary<string, Crew> getCrewsMapById
         {
             get { return this.crews.ToDictionary(p => p.id, p => p); }
+        }
+
+        public Crew getMyCrew()
+        {
+            return getCrewById(crewId);
+        }
+
+        public Crew getCrewById(string id)
+        {
+            return crews.Find((crew) => id.Equals(crew.id));
         }
     }
 }

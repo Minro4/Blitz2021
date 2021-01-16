@@ -28,10 +28,12 @@ namespace Blitz2020
             Crew myCrew = gameMessage.getCrewsMapById[gameMessage.crewId];
             int mapSize = gameMessage.map.getMapSize();
 
-
             List<GameCommand.Action> actions = myCrew.units
                 .Select(c => new UnitAction(UnitActionType.MOVE, c.id, this.getRandomPosition(mapSize)))
                 .ToList<GameCommand.Action>();
+
+            var baseManager = new BaseManager();
+            baseManager.buy(actions, gameMessage);
 
             return new GameCommand(actions);
         }
