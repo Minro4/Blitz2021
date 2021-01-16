@@ -14,7 +14,7 @@ namespace Blitz2020
     {
         private readonly double distanceValueDiminisher = 30;
         private readonly int far = 150;
-        private readonly int quantityStackCap = 75;
+        private readonly int quantityStackCap = 100;
         private readonly int isPublicPenalty = 25;
 
         List<Chariot> chariots;

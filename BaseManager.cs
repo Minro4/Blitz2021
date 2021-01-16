@@ -11,6 +11,7 @@ namespace Blitz2021
     {
         private MapManager mapManager;
         private MinerManager minerManager;
+        private bool spawnedOutlaw = false;
 
         public BaseManager(MapManager mapManager, MinerManager minerManager)
         {
@@ -72,12 +73,32 @@ namespace Blitz2021
                 }
             }
 
+            if (actions.Count == 0)
+            {
+                if (!spawnedOutlaw && crew.blitzium >= crew.prices.OUTLAW)
+                {
+                    var action = new BuyAction(Unit.UnitType.OUTLAW);
+                    actions.Add(action);
+                    spawnedOutlaw = true;
+                }
+            }
+
             return actions;
         }
 
         public int growthRate()
         {
             return this.minerManager.getMiningMiners().Count;
+        }
+
+        public bool timeToKill(GameMessage message)
+        {
+            var tickLeft = message.totalTick - message.tick;
+            var percent = (double) message.tick / message.totalTick;
+            if (message.getMyCrew().blitzium >= 50 && percent >= 0.25 && tickLeft >= 100)
+                return true;
+
+            return false;
         }
     }
 }
