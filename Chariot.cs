@@ -11,47 +11,68 @@ namespace Blitz2020
 
 	public class Chariot
 	{
-		public bool done;
-		public Chariot() {
-			done = true;
+		public string id;
+		public State state;
+		public Position targetPosition;
+		public Position targerPickUp;
+		public Position basePosition;
+
+		public enum State
+		{
+			TRAVEL, RETURN,WAITTING
 		}
 
-		public UnitAction goTo(Unit kart, Position target){
-			UnitAction action;
-			if (estPerimetre(kart.position, target)) {
-				action = new UnitAction(UnitActionType.PICKUP, kart.id, target);
-				done = true;
-			}
-			else {
-				action = new UnitAction(UnitActionType.MOVE, kart.id, target);
-				done = false;
-			}
-			return action;
+		public Chariot(string id, Position basePosition) {
+			this.id = id;
+			this.basePosition = basePosition;
+			this.state = State.WAITTING;
 		}
-		public UnitAction goToBase(Unit kart, Position target) {
-			UnitAction action;
-			if (estPerimetre(kart.position, target))
-			{
-				action = new UnitAction(UnitActionType.DROP, kart.id, target);
-				done = true;
-			}
-			else
-			{
-				action = new UnitAction(UnitActionType.MOVE, kart.id, target);
-				done = false;
-			}
-			return action;
-		}
-		public bool estPerimetre(Position kartPosition, Position target) {
-			bool answer=false;
-			int distanceX =Math.Abs( kartPosition.x - target.x);
-			int distanceY = Math.Abs(kartPosition.y - target.y);
-			if (distanceX <= 1 && distanceY <= 1) {
-				answer = true;
-			}
 
-			return answer;
+		public void setGoal(Position targetPosition, Position targetPickUp) 
+		{
+			this.targerPickUp = targetPickUp;
+			this.targetPosition = targetPosition;
 		}
+
+		public bool isWaitting() 
+		{
+			return state == State.WAITTING;
+		}
+
+		public UnitAction selectAction(Unit a)
+		{
+			if (state == State.TRAVEL)
+			{
+				if (targetPosition.Equals(a.position))
+				{
+					state = State.RETURN;
+					targetPosition = new Position(basePosition.x + 1, basePosition.y);
+					return new UnitAction(UnitActionType.PICKUP, id, targerPickUp);
+				}
+				else
+				{
+					return new UnitAction(UnitActionType.MOVE, id, targetPosition);
+				}
+			}
+			else if (state == State.RETURN)
+			{
+				if (targetPosition.Equals(a.position))
+				{
+					state = State.WAITTING;
+					return new UnitAction(UnitActionType.DROP, id, basePosition);
+				}
+				else
+				{
+					return new UnitAction(UnitActionType.MOVE, id, targetPosition);
+				}
+			}
+			else if (state == State.WAITTING)
+			{
+				return new UnitAction(UnitActionType.NONE, id, basePosition);
+			}
+			return new UnitAction(UnitActionType.NONE, id, basePosition);
+		}
+
 	}
 
 }
