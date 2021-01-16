@@ -45,7 +45,7 @@ namespace Blitz2021
 
             if (carts.Count == 0)
                 return totalCost / 0.01;
-            return totalCost / (carts.Count * 25);
+            return (double)totalCost / (carts.Count * 25);
         }
     }
 }
