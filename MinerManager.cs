@@ -27,7 +27,6 @@ namespace Blitz2021
                     if (miner.position.Equals(miner.target))
                     {
                         miningMiners.Add(miner);
-                        Pathfinding.addBlocker(miner.position);
                     }
                     else
                     {

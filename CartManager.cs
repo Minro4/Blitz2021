@@ -16,7 +16,7 @@ namespace Blitz2020
         private readonly double distanceValueDiminisher = 30;
         private readonly int far = 150;
         private readonly int quantityStackCap = 100;
-        private readonly int isPublicPenalty = 25;
+        private readonly int isPublicPenalty = 10;
 
         List<Chariot> chariots;
 
@@ -42,7 +42,7 @@ namespace Blitz2020
                 var travelingChariots = chariots.Where(chariot => chariot.state == Chariot.State.TRAVEL).ToList();
 
                 var ressources = miners.Select(Ressource.fromMiner).ToList();
-                //ressources.AddRange(depots.Select(Ressource.fromDepot));
+                ressources.AddRange(depots.Select(Ressource.fromDepot));
 
                 var availableResources = ressources.Where(resource =>
                 {
