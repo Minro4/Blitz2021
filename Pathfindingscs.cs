@@ -35,6 +35,10 @@ namespace Blitz2021
 
                     if (gameMessage.map.getTileTypeAt(pos) == TileType.WALL || MapManager.isInsideEnnemieBase(gameMessage, pos))
                     {
+                        grid.DisconnectNode(new GridPosition(i, j));
+                    }
+                    else
+                    {
                         var positions = gameMessage.getOtherCrews().SelectMany((crew) => crew.units).Select((unit) => unit.position).ToList();
                         positions.AddRange(gameMessage.getMyCrew().units.Where(u => u.type == Unit.UnitType.MINER).Select((unit) => unit.position).ToList());
                         if (positions.Contains(pos))
