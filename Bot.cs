@@ -44,7 +44,7 @@ namespace Blitz2020
             mapManager.getAllMine(gameMessage.map);
 
             minerMan.setMiners(myCrew.units.Where(Unit=>Unit.type == 0).ToList());
-            minerMan.setAvailableMiningSpots(mapManager.Mines.SelectMany((mine => mine.Mineable)).ToList());
+            minerMan.setAvailableMiningSpots(mapManager.getAllMineNotOccupied(gameMessage));
 
             actions.AddRange(minerMan.getActions(gameMessage,mapManager.Mines.Select(mine=> mine.Mines).ToList()));
 
