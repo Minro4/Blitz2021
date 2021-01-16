@@ -18,27 +18,45 @@ namespace Blitz2021
 
         
         public List<GameCommand.Action> getActions(Blitz2020.GameMessage gameMessage,List<Position> mines){
-            List<GameCommand.Action> actions = new List<GameCommand.Action>();
-            List<Unit> movingMiners = new List<Unit>();
-            foreach (Unit miner in miners){
-                if (miner.position.Equals(miner.target)){
-                    miningMiners.Add(miner);
-                    //Pathfinding.addBlocker(miner.position); TODO FIX
+            try
+            {
+                List<GameCommand.Action> actions = new List<GameCommand.Action>();
+                List<Unit> movingMiners = new List<Unit>();
+                foreach (Unit miner in miners)
+                {
+                    if (miner.position.Equals(miner.target))
+                    {
+                        miningMiners.Add(miner);
+                        //Pathfinding.addBlocker(miner.position); TODO FIX
+                    }
+                    else
+                    {
+                        movingMiners.Add(miner);
+                    }
                 }
-                else{
-                    movingMiners.Add(miner);
+
+                miners = movingMiners;
+                actions.AddRange(mine(mines));
+                foreach (Unit miner in miners)
+                {
+                    if (!miner.isMoving)
+                    {
+                        miner.target = availableMiningSpots[getClosestSpotId(miner)];
+                        miner.isMoving = true;
+                    }
+
+                    actions.Add(new UnitAction(UnitActionType.MOVE, miner.id, miner.target));
                 }
+
+                return actions;
             }
-            miners = movingMiners;
-            actions.AddRange(mine(mines));
-            foreach (Unit miner in miners){
-                if (!miner.isMoving){
-                    miner.target = availableMiningSpots[getClosestSpotId(miner)];
-                    miner.isMoving = true;
-                }
-                actions.Add(new UnitAction(UnitActionType.MOVE, miner.id,miner.target));
+            catch (Exception ex)
+            {
+                Console.WriteLine("throw: " + ex);
+                Console.WriteLine("Trace: " + ex.StackTrace);
+                return new List<GameCommand.Action>();
             }
-            return actions;
+           
         }
         public void setMiners(List<Unit> newMiners){
             foreach (Unit miner in newMiners){

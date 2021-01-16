@@ -38,10 +38,11 @@ namespace Blitz2020
         */
         public GameCommand nextMove(GameMessage gameMessage)
         {
+            List<GameCommand.Action> actions = new List<GameCommand.Action>();
             try
             {
                 Pathfinding.initialize(gameMessage);
-                List<GameCommand.Action> actions = new List<GameCommand.Action>();
+
                 Crew myCrew = gameMessage.getCrewsMapById[gameMessage.crewId];
                 int mapSize = gameMessage.map.getMapSize();
 
@@ -62,7 +63,7 @@ namespace Blitz2020
             {
                 Console.WriteLine("throw: " + ex);
                 Console.WriteLine("Trace: " + ex.StackTrace);
-                return new GameCommand(new List<GameCommand.Action>());
+                return new GameCommand(actions);
             }
         }
 

@@ -21,7 +21,16 @@ namespace Blitz2021
 
         public List<GameCommand.Action> update(GameMessage message)
         {
-            return expentionStrat(message);
+            try
+            {
+                return expentionStrat(message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("throw: " + ex);
+                Console.WriteLine("Trace: " + ex.StackTrace);
+                return new List<GameCommand.Action>();
+            }
         }
 
         public double minerEfficiency(GameMessage message)
@@ -82,7 +91,7 @@ namespace Blitz2021
                     }
                 }
             }
-            
+
             return actions;
         }
 
@@ -95,7 +104,7 @@ namespace Blitz2021
         {
             var tickLeft = message.totalTick - message.tick;
             var percent = (double) message.tick / message.totalTick;
-            if (message.getMyCrew().blitzium >= 50 && percent >= 0.25 && tickLeft >= 100)
+            if (message.getMyCrew().blitzium >= 50 && tickLeft >= 100)
                 return true;
 
             return false;

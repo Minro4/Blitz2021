@@ -22,6 +22,7 @@ namespace Blitz2020
 
         public List<UnitAction> updateOutlaw(GameMessage message, MinerManager minersManager, MapManager mapManager, bool timeKill)
         {
+            try {
             var newOutlaws = message.getMyCrew().get(Unit.UnitType.OUTLAW);
             cleanOutlaws(newOutlaws, message);
             List<UnitAction> cartAction = new List<UnitAction>();
@@ -45,12 +46,14 @@ namespace Blitz2020
             }
 
             return outlaws.Select(outlaw => outlaw.selectAction(message,outlaw.findOutlaw(newOutlaws))).ToList();
-
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("throw: " + ex);
+                Console.WriteLine("Trace: " + ex.StackTrace);
+                return new List<UnitAction>();
+            }
         }
-
-
-
-
 
         private void cleanOutlaws(List<Unit> newOutlaws, GameMessage message)
         {
