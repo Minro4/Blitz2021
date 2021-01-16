@@ -57,9 +57,9 @@ public class MapManager
         return pos;
     }
 
-    public List<Position> getMineableTileNotOccupied(GameMessage message, Position P) 
+    public static List<Position> getMineableTileNotOccupied(GameMessage message, Position P) 
     {
-        List<Position> tiles = this.getMineableTile(message.map, P);
+        List<Position> tiles = getMineableTile(message.map, P);
         List<Position> freeTiles = new List<Position>();
 
         for (int x = 0; x < tiles.Count; x++) 
@@ -74,7 +74,7 @@ public class MapManager
         return freeTiles;
     }
 
-    public List<Position> getMineableTile(Map map, Position P) 
+    public static List<Position> getMineableTile(Map map, Position P) 
     {
         int mapSize = map.getMapSize();
         List<Position> adjasentTile = new List<Position>();
@@ -106,7 +106,7 @@ public class MapManager
         return adjasentTile;
     }
 
-    private bool testCell(Map map, int x, int y)
+    private static bool testCell(Map map, int x, int y)
     {
         Position P = new Position(x, y);
 
@@ -114,7 +114,7 @@ public class MapManager
     }
 
 
-    private bool isMineable(TileType tileType)
+    private static bool isMineable(TileType tileType)
     {
         switch (tileType)
         {

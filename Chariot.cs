@@ -42,14 +42,14 @@ namespace Blitz2020
             return state == State.WAITTING;
         }
 
-        public UnitAction selectAction(Unit a, GameMessage message, MapManager mapManager)
+        public UnitAction selectAction(Unit a, GameMessage message)
         {
             if (state == State.TRAVEL)
             {
                 if (targetPosition.Equals(a.position))
                 {
                     state = State.RETURN;
-                    List<Position> available = mapManager.getMineableTileNotOccupied(message, basePosition);
+                    List<Position> available = MapManager.getMineableTileNotOccupied(message, basePosition);
                     if(available.Count > 0)
                         targetPosition = available[0];
                     
