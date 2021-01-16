@@ -38,24 +38,31 @@ namespace Blitz2020
         */
         public GameCommand nextMove(GameMessage gameMessage)
         {
-            Pathfinding.initialize(gameMessage);
-            List<GameCommand.Action> actions = new List<GameCommand.Action>();
-            Crew myCrew = gameMessage.getCrewsMapById[gameMessage.crewId];
-            int mapSize = gameMessage.map.getMapSize();
+            try
+            {
+                Pathfinding.initialize(gameMessage);
+                List<GameCommand.Action> actions = new List<GameCommand.Action>();
+                Crew myCrew = gameMessage.getCrewsMapById[gameMessage.crewId];
+                int mapSize = gameMessage.map.getMapSize();
 
 
-            mapManager.getAllMine(gameMessage.map);
+                mapManager.getAllMine(gameMessage.map);
 
-            minerMan.setMiners(myCrew.units.Where(Unit => Unit.type == 0).ToList());
-            minerMan.setAvailableMiningSpots(mapManager.getAllMineNotOccupied(gameMessage));
+                minerMan.setMiners(myCrew.units.Where(Unit => Unit.type == 0).ToList());
+                minerMan.setAvailableMiningSpots(mapManager.getAllMineNotOccupied(gameMessage));
 
-            actions.AddRange(minerMan.getActions(gameMessage, mapManager.Mines.Select(mine => mine.Mines).ToList()));
+                actions.AddRange(minerMan.getActions(gameMessage, mapManager.Mines.Select(mine => mine.Mines).ToList()));
 
-            actions.AddRange(baseManager.update(gameMessage));
-            actions.AddRange(cartManager.updateCart(gameMessage, minerMan, mapManager));
-            actions.AddRange(outlawManager.updateOutlaw(gameMessage, minerMan, mapManager, baseManager.timeToKill(gameMessage)));
-
-            return new GameCommand(actions);
+                actions.AddRange(baseManager.update(gameMessage));
+                actions.AddRange(cartManager.updateCart(gameMessage, minerMan, mapManager));
+                actions.AddRange(outlawManager.updateOutlaw(gameMessage, minerMan, mapManager, baseManager.timeToKill(gameMessage)));
+                return new GameCommand(actions);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("throw: " + ex);
+                return new GameCommand(new List<GameCommand.Action>());
+            }
         }
 
         public Position getRandomPosition(int size)
