@@ -36,31 +36,40 @@ namespace Blitz2021
                         movingMiners.Add(miner);
                     }
                 }
-                if (minerFollower.target != null){
-                    if (minerFollower.target.isOccupied(gameMessage)){
+
+                if (minerFollower.target != null)
+                {
+                    if (minerFollower.target.isOccupied(gameMessage))
+                    {
                         Unit miner = new Unit();
                         miner.position = minerFollower.position;
                         miner.isMoving = true;
                         miner.id = minerFollower.id;
-                        miner.target = MapManager.getMineableTileNotOccupied(gameMessage,minerFollower.target)[getClosestSpotId(MapManager.getMineableTileNotOccupied(gameMessage,minerFollower.target),minerFollower)];
+                        miner.target = MapManager.getMineableTileNotOccupied(gameMessage, minerFollower.target)[
+                            getClosestSpotId(MapManager.getMineableTileNotOccupied(gameMessage, minerFollower.target), minerFollower)];
                         movingMiners.Add(miner);
                     }
-                    else{
+                    else
+                    {
                         Unit miner = new Unit();
                         miner.position = minerFollower.position;
                         miner.isMoving = true;
                         miner.id = minerFollower.id;
-                        miner.target = new Position(minerFollower.target.x,minerFollower.target.y);
+                        miner.target = new Position(minerFollower.target.x, minerFollower.target.y);
                         movingMiners.Add(miner);
                         minerFollower.target = null;
                     }
                 }
+
                 miners = movingMiners;
                 actions.AddRange(mine(mines));
-                foreach (Unit miner in miners){
-                    if (!miner.isMoving){
-                        if (availableMiningSpots.Count > 0 && miner.inactivity < 2){
-                            miner.target = availableMiningSpots[getClosestSpotId(availableMiningSpots,miner)];
+                foreach (Unit miner in miners)
+                {
+                    if (!miner.isMoving)
+                    {
+                        if (availableMiningSpots.Count > 0 && miner.inactivity < 2)
+                        {
+                            miner.target = availableMiningSpots[getClosestSpotId(availableMiningSpots, miner)];
                             miner.isMoving = true;
                         }
                         else
@@ -85,14 +94,12 @@ namespace Blitz2021
 
         public void setMiners(List<Unit> newMiners)
         {
-            var updatedMiner = new List<Unit>();
             foreach (Unit miner in newMiners)
             {
                 int i = miners.FindIndex(mine => mine.id == miner.id);
                 int j = miningMiners.FindIndex(mine => mine.id == miner.id);
                 if (i != -1)
                 {
-                    updatedMiner.Add(miners[i]);
                     if (miners[i].position.Equals(miner.position))
                     {
                         if (miners[i].inactivity > 2)
@@ -127,13 +134,13 @@ namespace Blitz2021
                     {
                         miner.isMoving = false;
                         miner.inactivity = 0;
-                        //miners.Add(miner);
-                        updatedMiner.Add(miner);
+                        miners.Add(miner);
                     }
                 }
             }
 
-            miners = updatedMiner;
+            miners = miners.Where(miner => (newMiners.Find(newMiner => newMiner.id == miner.id) != null)).ToList();
+            miningMiners = miningMiners.Where(miner => (newMiners.Find(newMiner => newMiner.id == miner.id) != null)).ToList();
         }
 
         public void setAvailableMiningSpots(List<Position> possibleSpots)
@@ -163,13 +170,17 @@ namespace Blitz2021
 
             return new Position(0, 0);
         }
-        private int getClosestSpotId(List<Position> list,Unit miner){       
+
+        private int getClosestSpotId(List<Position> list, Unit miner)
+        {
             int id = 0;
             int i = 0;
             float minimum = 99999;
-            foreach (Position spot in list){
-                float dist = Pathfinding.path(miner.position,spot);
-                if (dist < minimum){
+            foreach (Position spot in list)
+            {
+                float dist = Pathfinding.path(miner.position, spot);
+                if (dist < minimum)
+                {
                     id = i;
                     minimum = dist;
                 }
