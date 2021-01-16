@@ -47,7 +47,7 @@ namespace Blitz2020
                 waitingChariots[i].setGoal(targetPosition[0], sortedMiners[i].position);
             }
 
-            return chariots.Select(chariot => chariot.selectAction(chariot.findChariot(karts))).ToList();
+            return chariots.Select(chariot => chariot.selectAction(chariot.findChariot(karts),message,mapManager)).ToList();
         }
 
         private void cleanCarts(List<Unit> karts, GameMessage message)
