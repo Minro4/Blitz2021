@@ -32,7 +32,9 @@ namespace Blitz2021
                 pathFinder = new PathFinder();
             }
         }
-
+        public static void addBlocker(Map.Position pos){
+            grid.DisconnectNode(new GridPosition(pos.x,pos.y));
+        }
         public static int path(Map.Position p1, Map.Position p2)
         {
             var path = pathFinder.FindPath(new GridPosition(p1.x,p1.y), new GridPosition(p2.x,p2.y), grid);
