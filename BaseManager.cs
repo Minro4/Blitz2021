@@ -148,7 +148,6 @@ namespace Blitz2021
                 if (spawnedOutlaw && message.getMyCrew().blitzium >= 50 && tickLeft >= 250 && (otherBestPotential * 1) > ourPotential)
                 {
                     miniumBank = 50;
-                    spawnMinerNext = true;
                     return true;
                 }
 
