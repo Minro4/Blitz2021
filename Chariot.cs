@@ -11,83 +11,68 @@ namespace Blitz2020
 
 	public class Chariot
 	{
-		public bool done;
 		public string id;
 		public State state;
-		public Position target;
+		public Position targetPosition;
+		public Position targerPickUp;
+		public Position basePosition;
 
 		public enum State
 		{
-			TRAVEL, PICKUP, RETURN, DROP,WAITTING
+			TRAVEL, RETURN,WAITTING
 		}
 
-		public UnitAction selectAction(Unit a) 
+		public Chariot(string id, Position basePosition) {
+			this.id = id;
+			this.basePosition = basePosition;
+			this.state = State.WAITTING;
+		}
+
+		public void setGoal(Position targetPosition, Position targetPickUp) 
+		{
+			this.targerPickUp = targetPickUp;
+			this.targetPosition = targetPosition;
+		}
+
+		public bool isWaitting() 
+		{
+			return state == State.WAITTING;
+		}
+
+		public UnitAction selectAction(Unit a)
 		{
 			if (state == State.TRAVEL)
 			{
-				if (target.Equals(a.position))
+				if (targetPosition.Equals(a.position))
 				{
-					state = State.PICKUP;
-					return new UnitAction(UnitActionType.MOVE, id, target);
+					state = State.RETURN;
+					targetPosition = new Position(basePosition.x + 1, basePosition.y);
+					return new UnitAction(UnitActionType.PICKUP, id, targerPickUp);
 				}
-				else 
-				{ 
-				
+				else
+				{
+					return new UnitAction(UnitActionType.MOVE, id, targetPosition);
 				}
-					
-
-				return new UnitAction(UnitActionType.MOVE, id, target);
 			}
-			else if (state == State.TRAVEL) 
-			{ 
-			
-			}
-
-			return new UnitAction(UnitActionType.MOVE, id, target);
-		}
-
-		public Chariot(string id) {
-			done = true;
-			this.id = id;
-		}
-
-		public UnitAction goTo(Unit kart, Position target){
-			UnitAction action;
-			if (estPerimetre(kart, target)) {
-				action = new UnitAction(UnitActionType.PICKUP, kart.id, target);
-				//done = true;
-			}
-			else {
-				action = new UnitAction(UnitActionType.MOVE, kart.id, target);
-				//done = false;
-			}
-			return action;
-		}
-		public UnitAction goToBase(Unit kart, Position target) {
-			UnitAction action;
-			if (estPerimetre(kart, target))
+			else if (state == State.RETURN)
 			{
-				action = new UnitAction(UnitActionType.DROP, kart.id, target);
-				//done = true;
+				if (targetPosition.Equals(a.position))
+				{
+					state = State.WAITTING;
+					return new UnitAction(UnitActionType.DROP, id, basePosition);
+				}
+				else
+				{
+					return new UnitAction(UnitActionType.MOVE, id, targetPosition);
+				}
 			}
-			else
+			else if (state == State.WAITTING)
 			{
-				action = new UnitAction(UnitActionType.MOVE, kart.id, target);
-				//done = false;
+				return new UnitAction(UnitActionType.NONE, id, basePosition);
 			}
-			return action;
+			return new UnitAction(UnitActionType.NONE, id, basePosition);
 		}
 
-		public bool estPerimetre(Unit kart, Position target) {
-
-			bool answer=false;
-			
-			if (kart.path.Count==0) {
-				answer = true;
-			}
-
-			return answer;
-		}
 	}
 
 }

@@ -44,7 +44,7 @@ namespace Blitz2020
                 List<Unit> miners = minersManager.getMiningMiners();
                 for (int x = 0; x < init.Count; x++) 
                 {
-                    cartAction.Add(Chariot.goTo(init[x], miners[0].position));
+                    //cartAction.Add(Chariot.goTo(init[x], miners[0].position));
                     inTravel.Add(init[x]);
                     init.Remove(init[x]);
                 }
@@ -57,7 +57,7 @@ namespace Blitz2020
                 for (int x = 0; x < inTravel.Count; x++)
                 {
                  
-                    cartAction.Add(Chariot.goTo(init[x], miners[0].position));
+                    //cartAction.Add(Chariot.goTo(init[x], miners[0].position));
                     inTravel.Add(init[x]);
                     init.Remove(init[x]);
                 }
