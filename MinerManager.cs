@@ -78,9 +78,9 @@ namespace Blitz2021
         private int getClosestSpotId(Unit miner){       
             int id = 0;
             int i = 0;
-            int minimum = 99999;
+            float minimum = 99999;
             foreach (Position spot in availableMiningSpots){
-                int dist = Pathfinding.path(miner.position,spot).Count;
+                float dist = Pathfinding.path(miner.position,spot);
                 if (dist < minimum){
                     id = i;
                     minimum = dist;
