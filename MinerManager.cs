@@ -45,7 +45,7 @@ namespace Blitz2021
                 int i = miners.FindIndex(mine=>mine.id == miner.id);
                 int j = miningMiners.FindIndex(mine=>mine.id == miner.id);
                 if (i != -1){
-                    if(miners[i].position == miner.position){
+                    if(miners[i].position.Equals(miner.position)){
                         if (miners[i].inactivity > 2){
                             miners[i].isMoving = false;
                             miners[i].inactivity = 0;
