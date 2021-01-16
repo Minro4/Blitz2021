@@ -49,26 +49,26 @@ namespace Blitz2021
             {
                 if (crew.blitzium >= crew.prices.CART)
                 {
-                    var availableMines = mapManager.getAllMineNotOccupied(message);
-                    var mineDistances = availableMines.Select(pos => Pathfinding.path(pos, crew.homeBase).Count).ToList();
-                    if (mineDistances.Count > minerManager.getMovingMiners().Count)
-                    {
-                        var bestMineDist = mineDistances.Min();
-                        var tickLeft = message.totalTick - message.tick;
-                        if ((tickLeft - bestMineDist) > message.getMyCrew().prices.MINER * 2)
-                        {
-                            var action = new BuyAction(Unit.UnitType.CART);
-                            actions.Add(action);
-                        }
-                    }
+                    var action = new BuyAction(Unit.UnitType.CART);
+                    actions.Add(action);
                 }
             }
             else
             {
                 if (crew.blitzium >= crew.prices.MINER)
                 {
-                    var action = new BuyAction(Unit.UnitType.MINER);
-                    actions.Add(action);
+                    var availableMines = mapManager.getAllMineNotOccupied(message);
+                    var mineDistances = availableMines.Select(pos => Pathfinding.path(pos, crew.homeBase).Count).ToList();
+                    if (mineDistances.Count > minerManager.getMovingMiners().Count)
+                    {
+                        var bestMineDist = mineDistances.Min();
+                        var tickLeft = message.totalTick - message.tick;
+                        if ((tickLeft - bestMineDist) > message.getMyCrew().prices.MINER + message.getMyCrew().prices.CART)
+                        {
+                            var action = new BuyAction(Unit.UnitType.MINER);
+                            actions.Add(action);
+                        }
+                    }
                 }
             }
 
