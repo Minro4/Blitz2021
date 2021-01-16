@@ -6,17 +6,19 @@ using static Blitz2021.GameCommand;
 using static Blitz2021.GameCommand.UnitAction;
 using static Blitz2021.Map;
 using static MapManager;
+using static Blitz2021.MinerManager;
 
 
 namespace Blitz2020
 {
     public class Bot
     {
-        public static string NAME = "MyBot C#";
-
+        public static string NAME = "GUY";
+        MinerManager minerMan;
+        bool firstPass = false;
         public Bot()
         {
-            // initialize some variables you will need throughout the game here
+            minerMan = new MinerManager();
         }
 
         /*
@@ -33,10 +35,13 @@ namespace Blitz2020
             MapManager mapManager = new MapManager();
             mapManager.getAllMine(gameMessage.map);
 
+            if (!firstPass){
+                minerMan.addMiner(myCrew.units[0]);
+                firstPass = true;
+            }
+            minerMan.setAvailableMiningSpots(mapManager.Mines.SelectMany((mine => mine.Mineable)).ToList());
 
-            List<GameCommand.Action> actions = myCrew.units
-                .Select(c => new UnitAction(UnitActionType.MOVE, c.id, this.getRandomPosition(mapSize)))
-                .ToList<GameCommand.Action>();
+            List<GameCommand.Action> actions = minerMan.getActions();
 
             var baseManager = new BaseManager();
             baseManager.buy(actions, gameMessage);

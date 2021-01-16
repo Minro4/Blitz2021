@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using Blitz2020;
 
 namespace Blitz2021
 {
@@ -17,6 +19,25 @@ namespace Blitz2021
             public override string ToString()
             {
                 return string.Format("P({0},{1})", this.x, this.y);
+            }
+
+            public override bool Equals(Object obj)
+            {
+                //Check for null and compare run-time types.
+                if ((obj == null) || ! this.GetType().Equals(obj.GetType()))
+                {
+                    return false;
+                }
+                else {
+                    Position p = (Position) obj;
+                    return (x == p.x) && (y == p.y);
+                }
+            }
+            
+            public bool isOccupied(GameMessage message)
+            {
+                var positions =  message.crews.SelectMany((crew) => crew.units).Select((unit) => unit.position);
+                return positions.Contains(this);
             }
         }
 

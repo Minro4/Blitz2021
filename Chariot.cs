@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Blitz2021;
+using static Blitz2021.GameCommand;
+using static Blitz2021.GameCommand.UnitAction;
+using static Blitz2021.Map;
 
 namespace Blitz2020
 {
@@ -25,7 +28,7 @@ namespace Blitz2020
 			}
 			return action;
 		}
-		public UnitAction goToBase() {
+		public UnitAction goToBase(Unit kart, Position target) {
 			UnitAction action;
 			if (estPerimetre(kart.position, target))
 			{
@@ -44,7 +47,7 @@ namespace Blitz2020
 			int distanceX =Math.Abs( kartPosition.x - target.x);
 			int distanceY = Math.Abs(kartPosition.y - target.y);
 			if (distanceX <= 1 && distanceY <= 1) {
-				answer == true;
+				answer = true;
 			}
 
 			return answer;
