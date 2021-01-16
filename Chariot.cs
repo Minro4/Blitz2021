@@ -15,6 +15,7 @@ namespace Blitz2020
         public Position targetPosition;
         public Position targerPickUp;
         public Position basePosition;
+        public Position lastPosition;
         public Ressource ressource;
 
         public enum State
@@ -36,6 +37,7 @@ namespace Blitz2020
             this.targerPickUp = ressource.position;
             this.targetPosition = targetPosition;
             this.ressource = ressource;
+            this.lastPosition = new Position(0, 0);
             state = State.TRAVEL;
         }
 
@@ -69,14 +71,25 @@ namespace Blitz2020
 
                     return new UnitAction(UnitActionType.PICKUP, id, targerPickUp);
                 }
-                else
+                else if (lastPosition.Equals(a.position))
+                {
+                    List<Position> available = MapManager.getMineableTileNotOccupied(message, targerPickUp);
+                    if (available.Count > 0)
+                    {
+                        Random rand = new Random();
+                        targetPosition = available[rand.Next(available.Count)];
+                    }
+
+                    return new UnitAction(UnitActionType.MOVE, id, targetPosition);
+                }
+                else 
                 {
                     return new UnitAction(UnitActionType.MOVE, id, targetPosition);
                 }
             }
             else if (state == State.RETURN)
             {
-                if (targetPosition.isOccupied(message))
+                if (targetPosition.isOccupied(message) || lastPosition.Equals(a.position))
                 {
                     List<Position> available = MapManager.getMineableTileNotOccupied(message, basePosition);
                     if (available.Count > 0)
@@ -90,6 +103,7 @@ namespace Blitz2020
                 }
                 else
                 {
+                    lastPosition = a.position;
                     return new UnitAction(UnitActionType.MOVE, id, targetPosition);
                 }
             }
