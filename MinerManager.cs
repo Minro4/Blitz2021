@@ -23,7 +23,7 @@ namespace Blitz2021
             foreach (Unit miner in miners){
                 if (miner.position.Equals(miner.target)){
                     miningMiners.Add(miner);
-                    Pathfinding.addBlocker(miner.position);
+                    //Pathfinding.addBlocker(miner.position); TODO FIX
                 }
                 else{
                     movingMiners.Add(miner);
