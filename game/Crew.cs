@@ -40,6 +40,6 @@ namespace Blitz2021
         public int blitzium;
         public Position position;
         public List<Position> path;
-        public bool isOccupied;
+        public bool isMoving;
     }
 }
