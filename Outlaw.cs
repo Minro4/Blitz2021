@@ -44,9 +44,9 @@ namespace Blitz2020
             {
                 if (targetPosition.Equals(unit.position) || Pathfinding.path(unit.position, targetKilling) == 1)
                 {
-                    List<Position> available = MapManager.getMineableTileNotOccupied(message, targetKilling);
-                    if (available.Count > 0)
-                        targetPosition = available[0];
+                    Position available = Pathfinding.bestPos(message, unit.position, targetKilling).Item1;
+                    if (available != null)
+                        targetPosition = available;
 
                     state = State.WAITTING;
                     targetPosition = getRandomPosition(message.map.getMapSize());
@@ -61,13 +61,13 @@ namespace Blitz2020
             {
                 if (Pathfinding.path(unit.position, targetKilling) < 2 || lastPosition.Equals(unit.position))
                 {
-                    List<Position> available = MapManager.getMineableTileNotOccupied(message,getRandomPosition(message.map.getMapSize()));
+                    List<Position> available = MapManager.getMineableTileNotOccupied(message, getRandomPosition(message.map.getMapSize()));
 
                     if (available.Count > 0)
                     {
                         targetPosition = available[0];
                     }
-                    
+
                     return new UnitAction(UnitActionType.MOVE, id, targetPosition);
                 }
                 else

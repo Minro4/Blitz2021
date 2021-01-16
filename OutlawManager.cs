@@ -35,10 +35,11 @@ namespace Blitz2020
                     {
                         if (ennemie.Count > 1)
                         {
-                            var filteredEnnemie = ennemie.Where(e => MapManager.isInsideEnnemieBase(message, e)).ToList();
+                            var filteredEnnemie = ennemie.Where(e => Pathfinding.bestPos(message, outlaws[x].lastPosition, e) != null).ToList();
                             if (filteredEnnemie.Count > 0)
                             {
-                                List<Position> posibleTile = MapManager.getMineableTileNotOccupied(message, new Position(filteredEnnemie[0].x, filteredEnnemie[0].y));
+                                List<Position> posibleTile =
+                                    MapManager.getMineableTileNotOccupied(message, new Position(filteredEnnemie[0].x, filteredEnnemie[0].y));
 
 
                                 if (posibleTile.Count > 0)
