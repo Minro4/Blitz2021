@@ -89,5 +89,24 @@ namespace Blitz2021
             grid.AddEdge(new GridPosition(position.x, position.y), new GridPosition(position.x, position.y + 1), traversalVelocity);
             grid.AddEdge(new GridPosition(position.x, position.y), new GridPosition(position.x, position.y - 1), traversalVelocity);
         }
+
+
+        public static bool isAnyPathAvailable(Map.Position currentPosition, List<Map.Position> availableTile) 
+        {
+
+            for (int x=0; x < availableTile.Count; x++) 
+            {
+                if (path(currentPosition, availableTile[x]) < 1000) 
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
+
+
     }
 }
