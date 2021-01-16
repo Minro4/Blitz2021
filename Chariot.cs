@@ -50,9 +50,9 @@ namespace Blitz2020
                 {
                     state = State.RETURN;
                     List<Position> available = MapManager.getMineableTileNotOccupied(message, basePosition);
-                    if(available.Count > 0)
+                    if (available.Count > 0)
                         targetPosition = available[0];
-                    
+
                     return new UnitAction(UnitActionType.PICKUP, id, targerPickUp);
                 }
                 else
@@ -62,6 +62,13 @@ namespace Blitz2020
             }
             else if (state == State.RETURN)
             {
+                if (targetPosition.isOccupied(message))
+                {
+                    List<Position> available = MapManager.getMineableTileNotOccupied(message, basePosition);
+                    if (available.Count > 0)
+                        targetPosition = available[0];
+                }
+
                 if (targetPosition.Equals(a.position) || Pathfinding.path(a.position, basePosition).Count == 1)
                 {
                     state = State.WAITTING;
