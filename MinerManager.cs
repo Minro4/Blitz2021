@@ -58,8 +58,10 @@ namespace Blitz2021
             int i = 0;
             int minimum = 99999;
             foreach (Position spot in availableMiningSpots){
-                if (Pathfinding.path(miner.position,spot).Count < minimum){
+                int dist = Pathfinding.path(miner.position,spot).Count;
+                if (dist < minimum){
                     id = i;
+                    minimum = dist;
                 }
                 i++;
             } 
