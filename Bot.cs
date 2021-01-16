@@ -5,6 +5,7 @@ using Blitz2021;
 using static Blitz2021.GameCommand;
 using static Blitz2021.GameCommand.UnitAction;
 using static Blitz2021.Map;
+using static MapManager;
 
 
 namespace Blitz2020
@@ -29,34 +30,23 @@ namespace Blitz2020
             Crew myCrew = gameMessage.getCrewsMapById[gameMessage.crewId];
             int mapSize = gameMessage.map.getMapSize();
 
+            MapManager mapManager = new MapManager();
+            mapManager.getAllMine(gameMessage.map);
 
 
             List<GameCommand.Action> actions = myCrew.units
                 .Select(c => new UnitAction(UnitActionType.MOVE, c.id, this.getRandomPosition(mapSize)))
                 .ToList<GameCommand.Action>();
 
+           
 
-            int taille = gameMessage.map.depots.Length;
-            List<GameCommand.Action> action2s;
-
-            MapManager mapManager = new MapManager();
-
-            mapManager.getAllMine(gameMessage.map);
+            
                 
             
           
-            
-            if (Mines.Count >= 1)
-                action2s = myCrew.units
-                .Select(c => new UnitAction(UnitActionType.MOVE, c.id, Mines[1].Minable[2]))
-                .ToList<GameCommand.Action>();
-            else
-                action2s = myCrew.units
-                .Select(c => new UnitAction(UnitActionType.MOVE, c.id, this.getRandomPosition(mapSize)))
-                .ToList<GameCommand.Action>();
+           
 
-
-            return new GameCommand(action2s);
+            return new GameCommand(actions);
         }
 
         public Position getRandomPosition(int size)
