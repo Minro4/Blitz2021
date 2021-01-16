@@ -82,7 +82,7 @@ namespace Blitz2021
                     var tickLeft = message.totalTick - message.tick;
 
                     var availableMines = mapManager.getAllMineNotOccupied(message);
-                    var mineDistances = availableMines.Select(pos => Pathfinding.path(pos, crew.homeBase)).Where(d => d != Pathfinding.infinity).ToList();
+                    var mineDistances = availableMines.Select(pos => Pathfinding.bestPos(message,crew.homeBase,pos)).Where(d => d!= null).Select(d => d.Item2).ToList();
                     if (mineDistances.Count > minerManager.getMovingMiners().Count)
                     {
                         var bestMineDist = mineDistances.Min();
