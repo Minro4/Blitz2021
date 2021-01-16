@@ -110,14 +110,7 @@ public class MapManager
     {
         Position P = new Position(x, y);
 
-        if (isMineable(map.getTileTypeAt(P)))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return isMineable(map.getTileTypeAt(P));
     }
 
 
