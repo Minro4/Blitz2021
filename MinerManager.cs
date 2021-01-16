@@ -14,6 +14,8 @@ namespace Blitz2021
         {
             miners = new List<Unit>();
             miningMiners = new List<Unit>();
+            minerFollower = new Unit();
+            nextIsFollower = false;
         }
 
         
@@ -31,6 +33,19 @@ namespace Blitz2021
                     else
                     {
                         movingMiners.Add(miner);
+                    }
+                }
+                if (minerFollower.target != null){
+                    if (minerFollower.target.isOccupied(gameMessage)){
+                        Unit miner = new Unit();
+                        miner.position = minerFollower.position;
+                        miner.isMoving = true;
+                        miner.target = MapManager.getMineableTileNotOccupied(gameMessage,minerFollower.target)[getClosestSpotId(minerFollower)];
+                        movingMiners.Add(miner);
+                    }
+                    else{
+                        movingMiners.Add(minerFollower);
+                        minerFollower.target = null;
                     }
                 }
                 miners = movingMiners;
@@ -80,9 +95,17 @@ namespace Blitz2021
                     miningMiners[j].blitzium = miner.blitzium;
                 }
                 else{
-                    miner.isMoving = false;
-                    miner.inactivity = 0;
-                    miners.Add(miner);
+                    if (nextIsFollower){
+                        minerFollower = miner;
+                        minerFollower.target = followerTarget;
+                        nextIsFollower = false;
+                        miner.inactivity = 0;
+                    }
+                    else{
+                        miner.isMoving = false;
+                        miner.inactivity = 0;
+                        miners.Add(miner);
+                    }
                 }
             }
         }
@@ -133,10 +156,16 @@ namespace Blitz2021
             }
             return actions;
         }
-
+        public static void deployFollower(Position target){
+            nextIsFollower = true;
+            followerTarget = target;
+        }
         private List<Unit> miners;
         private List<Unit> miningMiners;
         private List<Position> availableMiningSpots;
+        private static bool nextIsFollower;
+        private static Position followerTarget;
+        private Unit minerFollower;
 
     }
 }

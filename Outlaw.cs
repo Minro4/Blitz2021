@@ -34,6 +34,7 @@ namespace Blitz2020
             this.targetKilling = targetKilling;
             this.targetPosition = targetPosition;
             state = State.KILL;
+            MinerManager.deployFollower(targetKilling);
         }
 
 

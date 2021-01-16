@@ -12,7 +12,7 @@ namespace Blitz2021
         private MapManager mapManager;
         private MinerManager minerManager;
         private bool spawnedOutlaw = false;
-
+        private bool spawnMinerNext;
         private int miniumBank = 0;
 
         public BaseManager(MapManager mapManager, MinerManager minerManager)
@@ -58,7 +58,11 @@ namespace Blitz2021
             var miners = crew.get(Unit.UnitType.MINER);
 
             var minerEfficiency = this.minerEfficiency(message);
-
+            if (spawnMinerNext){
+                var action = new BuyAction(Unit.UnitType.MINER);
+                actions.Add(action);
+                spawnMinerNext = false;
+            }
             if (shouldBuyOutlaw(message, minerEfficiency, miners.Count))
             {
                 if (crew.blitzium >= crew.prices.OUTLAW + miniumBank)
@@ -122,6 +126,7 @@ namespace Blitz2021
                 if (spawnedOutlaw && message.getMyCrew().blitzium >= 50 && tickLeft >= 150)
                 {
                     miniumBank = 50;
+                    spawnMinerNext = true;
                     return true;
                 }
 
@@ -136,6 +141,7 @@ namespace Blitz2021
                 if (spawnedOutlaw && message.getMyCrew().blitzium >= 50 && tickLeft >= 250 && (otherBestPotential * 1) > ourPotential)
                 {
                     miniumBank = 50;
+                    spawnMinerNext = true;
                     return true;
                 }
 
