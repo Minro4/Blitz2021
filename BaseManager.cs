@@ -58,13 +58,8 @@ namespace Blitz2021
             var miners = crew.get(Unit.UnitType.MINER);
 
             var minerEfficiency = this.minerEfficiency(message);
-            if (spawnMinerNext)
-            {
-                var action = new BuyAction(Unit.UnitType.MINER);
-                actions.Add(action);
-                spawnMinerNext = false;
-            }
-            else if (shouldBuyOutlaw(message, minerEfficiency, miners.Count))
+
+            if (shouldBuyOutlaw(message, minerEfficiency, miners.Count))
             {
                 if (crew.blitzium >= crew.prices.OUTLAW + miniumBank)
                 {
@@ -85,16 +80,27 @@ namespace Blitz2021
             {
                 if (crew.blitzium >= crew.prices.MINER + miniumBank)
                 {
+                    var tickLeft = message.totalTick - message.tick;
+
                     var availableMines = mapManager.getAllMineNotOccupied(message);
                     var mineDistances = availableMines.Select(pos => Pathfinding.path(pos, crew.homeBase)).Where(d => d != Pathfinding.infinity).ToList();
                     if (mineDistances.Count > minerManager.getMovingMiners().Count)
                     {
                         var bestMineDist = mineDistances.Min();
-                        var tickLeft = message.totalTick - message.tick;
+
                         if ((tickLeft - (bestMineDist * 3)) > message.getMyCrew().prices.MINER + message.getMyCrew().prices.CART)
                         {
                             var action = new BuyAction(Unit.UnitType.MINER);
                             actions.Add(action);
+                        }
+                    }
+                    else if (spawnMinerNext)
+                    {
+                        if (tickLeft > 250)
+                        {
+                            var action = new BuyAction(Unit.UnitType.MINER);
+                            actions.Add(action);
+                            spawnMinerNext = false;
                         }
                     }
                 }
