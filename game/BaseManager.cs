@@ -9,27 +9,18 @@ namespace Blitz2021
 {
     public class BaseManager
     {
-        public void buy(List<GameCommand.Action> actions, GameMessage message)
+        private MapManager mapManager;
+
+        public BaseManager(MapManager mapManager)
         {
-            Crew crew = message.getMyCrew();
+            this.mapManager = mapManager;
+        }
 
-            var minerEfficiency = this.minerEfficiency(message);
-
-            if (minerEfficiency > 1)
+        public void update(List<GameCommand.Action> actions, GameMessage message)
+        {
+            if (message.tick < message.totalTick / 2)
             {
-                if (crew.blitzium >= crew.prices.CART)
-                {
-                    var action = new BuyAction(Unit.UnitType.CART);
-                    actions.Add(action);
-                }
-            }
-            else
-            {
-                if (crew.blitzium >= crew.prices.MINER)
-                {
-                    var action = new BuyAction(Unit.UnitType.MINER);
-                    actions.Add(action);
-                }
+                expentionStrat(actions,message);
             }
         }
 
@@ -45,7 +36,35 @@ namespace Blitz2021
 
             if (carts.Count == 0)
                 return totalCost / 0.01;
-            return (double)totalCost / (carts.Count * 25);
+            return (double) totalCost / (carts.Count * 25);
+        }
+
+        public void expentionStrat(List<GameCommand.Action> actions, GameMessage message)
+        {
+            Crew crew = message.getMyCrew();
+
+            var minerEfficiency = this.minerEfficiency(message);
+
+            if (minerEfficiency > 1)
+            {
+                if (crew.blitzium >= crew.prices.CART)
+                {
+                    var availableMines = mapManager.getAllMineNotOccupied(message);
+                    if (availableMines.Count > 0)
+                    {
+                        var action = new BuyAction(Unit.UnitType.CART);
+                        actions.Add(action);
+                    }
+                }
+            }
+            else
+            {
+                if (crew.blitzium >= crew.prices.MINER)
+                {
+                    var action = new BuyAction(Unit.UnitType.MINER);
+                    actions.Add(action);
+                }
+            }
         }
     }
 }
