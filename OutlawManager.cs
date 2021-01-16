@@ -14,7 +14,7 @@ namespace Blitz2020
     {
         List<Outlaw> outlaws;
 
-        public OutlawManager() 
+        public OutlawManager()
         {
             outlaws = new List<Outlaw>();
         }
@@ -22,30 +22,36 @@ namespace Blitz2020
 
         public List<UnitAction> updateOutlaw(GameMessage message, MinerManager minersManager, MapManager mapManager, bool timeKill)
         {
-            try {
-            var newOutlaws = message.getMyCrew().get(Unit.UnitType.OUTLAW);
-            cleanOutlaws(newOutlaws, message);
-            List<UnitAction> cartAction = new List<UnitAction>();
-
-            if (timeKill) 
+            try
             {
-                List<Position> ennemie = message.getEnemieMiner();
-                for (int x = 0; x < outlaws.Count; x++) 
+                var newOutlaws = message.getMyCrew().get(Unit.UnitType.OUTLAW);
+                cleanOutlaws(newOutlaws, message);
+                List<UnitAction> cartAction = new List<UnitAction>();
+
+                if (timeKill)
                 {
-                    if (ennemie.Count > 1) 
+                    List<Position> ennemie = message.getEnemieMiner();
+                    for (int x = 0; x < outlaws.Count; x++)
                     {
-                       List<Position> posibleTile = MapManager.getMineableTileNotOccupied(message, new Position(ennemie[0].x, ennemie[0].y));
+                        if (ennemie.Count > 1)
+                        {
+                            var filteredEnnemie = ennemie.Where(e => MapManager.isInsideEnnemieBase(message, e)).ToList();
+                            if (filteredEnnemie.Count > 0)
+                            {
+                                List<Position> posibleTile = MapManager.getMineableTileNotOccupied(message, new Position(filteredEnnemie[0].x, filteredEnnemie[0].y));
 
 
-                        if (posibleTile.Count > 0) {
-                            outlaws[x].setGoal(posibleTile[0], ennemie[0]);
-                            ennemie.Remove(ennemie[0]);
+                                if (posibleTile.Count > 0)
+                                {
+                                    outlaws[x].setGoal(posibleTile[0], filteredEnnemie[0]);
+                                    filteredEnnemie.Remove(filteredEnnemie[0]);
+                                }
+                            }
                         }
                     }
                 }
-            }
 
-            return outlaws.Select(outlaw => outlaw.selectAction(message,outlaw.findOutlaw(newOutlaws))).ToList();
+                return outlaws.Select(outlaw => outlaw.selectAction(message, outlaw.findOutlaw(newOutlaws))).ToList();
             }
             catch (Exception ex)
             {
@@ -67,8 +73,5 @@ namespace Blitz2020
             var outlawNew = newKarts.Select(outlaw => new Outlaw(outlaw.id));
             outlaws.AddRange(outlawNew);
         }
-
     }
-
-
 }
