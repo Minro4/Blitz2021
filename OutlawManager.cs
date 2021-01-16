@@ -31,7 +31,7 @@ namespace Blitz2020
                 List<Position> ennemie = message.getEnemieMiner();
                 for (int x = 0; x < outlaws.Count; x++) 
                 {
-                    if (ennemie.Count > 0) 
+                    if (ennemie.Count > 1) 
                     {
                        List<Position> posibleTile = MapManager.getMineableTileNotOccupied(message, new Position(ennemie[0].x, ennemie[0].y));
 
@@ -56,7 +56,7 @@ namespace Blitz2020
         {
             //Remove dead chariots
             outlaws = outlaws.Where((outlaw) => { return newOutlaws.Find(outlaw1 => outlaw1.id == outlaw.id) != null; }).ToList();
-            
+
             //Add new chariots
             var newKarts = newOutlaws.Where((newOutlaw) => { return outlaws.Find((outlaw) => outlaw.id == newOutlaw.id) == null; })
                 .ToList();

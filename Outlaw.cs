@@ -21,8 +21,7 @@ namespace Blitz2020
         public State state;
         public Position targetPosition = new Position(0, 0);
         public Position targetKilling = new Position(0, 0);
-        public string targetToKillID;
-
+        public Position lastPosition = new Position(0, 0);
 
         public Outlaw(string id)
         {
@@ -59,18 +58,25 @@ namespace Blitz2020
             }
             else if (state == State.WAITTING)
             {
-                if (Pathfinding.path(unit.position, targetKilling) < 2)
+                if (Pathfinding.path(unit.position, targetKilling) < 2 || lastPosition.Equals(unit.position))
                 {
-                    targetPosition = getRandomPosition(message.map.getMapSize());
+                    List<Position> available = MapManager.getMineableTileNotOccupied(message,getRandomPosition(message.map.getMapSize()));
+
+                    if (available.Count > 0)
+                    {
+                        targetPosition = available[0];
+                    }
+                    
                     return new UnitAction(UnitActionType.MOVE, id, targetPosition);
                 }
                 else
                 {
+                    lastPosition = unit.position;
                     return new UnitAction(UnitActionType.MOVE, id, targetPosition);
                 }
             }
 
-            return new UnitAction(UnitActionType.NONE, id, new Position(0, 0));
+            return new UnitAction(UnitActionType.MOVE, id, new Position(0, 0));
         }
 
         public bool isWaitting()
