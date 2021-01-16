@@ -88,5 +88,15 @@ namespace Blitz2020
             return new Position(rand.Next(size), rand.Next(size));
         }
 
+        public Unit findOutlaw(List<Unit> units) 
+        {
+            for (int x = 0; x < units.Count; x++) 
+            {
+                if (units[x].id == this.id)
+                    return units[x];
+            }
+            return null;
+        }
+
     }
 }

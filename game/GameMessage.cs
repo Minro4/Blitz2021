@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Blitz2021;
+using static Blitz2021.GameCommand;
+using static Blitz2021.GameCommand.UnitAction;
+using static Blitz2021.Map;
+
 
 namespace Blitz2020
 {
@@ -38,5 +42,49 @@ namespace Blitz2020
         {
             return crews.Find((crew) => id.Equals(crew.id));
         }
+
+
+        public Crew getBestCrew() 
+        {
+            Crew bestOtherCrew = null;
+            bool start = true;
+            for (int x = 0; x < crews.Count; x++)
+            {
+                if (crews[x].id != crewId)
+                {
+                    if (start)
+                    {
+                        bestOtherCrew = crews[x];
+                        start = false;
+                    }
+
+                    if (bestOtherCrew.totalBlitzium < crews[x].totalBlitzium)
+                    {
+                        bestOtherCrew = crews[x];
+                    }
+                }
+            }
+
+            return bestOtherCrew;
+        }
+
+        public List<Position> getEnemieMiner() 
+        {
+            List<Position> Enemieminers = new List<Position>();
+            Crew bestCrew = getBestCrew();
+
+            if(bestCrew != null)
+            {
+                List<Unit> miner = bestCrew.get(Unit.UnitType.MINER);
+                for (int x = 0; x < miner.Count; x++)
+                {
+                    Enemieminers.Add(miner[x].position);
+                }
+            }
+            
+            return Enemieminers;
+
+        }
+
     }
 }

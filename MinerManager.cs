@@ -23,6 +23,7 @@ namespace Blitz2021
             foreach (Unit miner in miners){
                 if (miner.position.Equals(miner.target)){
                     miningMiners.Add(miner);
+                    Pathfinding.addBlocker(miner.position);
                 }
                 else{
                     movingMiners.Add(miner);
@@ -44,13 +45,26 @@ namespace Blitz2021
                 int i = miners.FindIndex(mine=>mine.id == miner.id);
                 int j = miningMiners.FindIndex(mine=>mine.id == miner.id);
                 if (i != -1){
-                    miners[i].position = miner.position;
+                    if(miners[i].position.Equals(miner.position)){
+                        if (miners[i].inactivity > 2){
+                            miners[i].isMoving = false;
+                            miners[i].inactivity = 0;
+                        }
+                        else{
+                            miners[i].inactivity++;
+                        }
+                    }
+                    else{
+                        miners[i].position = miner.position;
+                        miners[i].inactivity = 0;
+                    }
                 }
                 else if ( j != -1) {
                     miningMiners[j].blitzium = miner.blitzium;
                 }
                 else{
                     miner.isMoving = false;
+                    miner.inactivity = 0;
                     miners.Add(miner);
                 }
             }
