@@ -18,7 +18,7 @@ namespace Blitz2020
 
 		public UnitAction goTo(Unit kart, Position target){
 			UnitAction action;
-			if (estPerimetre(kart.position, target)) {
+			if (estPerimetre(kart, target)) {
 				action = new UnitAction(UnitActionType.PICKUP, kart.id, target);
 				done = true;
 			}
@@ -30,7 +30,7 @@ namespace Blitz2020
 		}
 		public UnitAction goToBase(Unit kart, Position target) {
 			UnitAction action;
-			if (estPerimetre(kart.position, target))
+			if (estPerimetre(kart, target))
 			{
 				action = new UnitAction(UnitActionType.DROP, kart.id, target);
 				done = true;
@@ -42,11 +42,10 @@ namespace Blitz2020
 			}
 			return action;
 		}
-		public bool estPerimetre(Position kartPosition, Position target) {
+		public bool estPerimetre(Unit kart, Position target) {
 			bool answer=false;
-			int distanceX =Math.Abs( kartPosition.x - target.x);
-			int distanceY = Math.Abs(kartPosition.y - target.y);
-			if (distanceX <= 1 && distanceY <= 1) {
+			
+			if (kart.path.Count==0) {
 				answer = true;
 			}
 

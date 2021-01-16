@@ -45,7 +45,7 @@ namespace Blitz2020
             }
             minerMan.setAvailableMiningSpots(mapManager.Mines.SelectMany((mine => mine.Mineable)).ToList());
 
-            List<GameCommand.Action> actions = minerMan.getActions();
+            List<GameCommand.Action> actions = minerMan.getActions(gameMessage);
             
             baseManager.update(actions, gameMessage);
 
