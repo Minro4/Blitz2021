@@ -17,6 +17,7 @@ namespace Blitz2020
         public Position basePosition;
         public Position lastPosition;
         public Ressource ressource;
+        public int samePositionCtr=0;
 
         public enum State
         {
@@ -68,18 +69,24 @@ namespace Blitz2020
                     List<Position> available = MapManager.getMineableTileNotOccupied(message, basePosition);
                     if (available.Count > 0)
                         targetPosition = available[0];
-
+                    samePositionCtr = 0;
                     return new UnitAction(UnitActionType.PICKUP, id, targerPickUp);
                 }
                 else if (lastPosition.Equals(a.position))
                 {
-                    List<Position> available = MapManager.getMineableTileNotOccupied(message, targerPickUp);
-                    if (available.Count > 0)
+                    samePositionCtr += 1;
+                    if (samePositionCtr >= 3)
                     {
-                        Random rand = new Random();
-                        targetPosition = available[rand.Next(available.Count)];
+                        List<Position> available = MapManager.getMineableTileNotOccupied(message, targerPickUp);
+                        if (available.Count > 0 && Pathfinding.isAnyPathAvailable(a.position, available))
+                        {
+                            targetPosition = Pathfinding.findAvailablePosition(a.position, available);
+                        }
+                        else
+                        {
+                            state = State.WAITTING;
+                        }
                     }
-
                     return new UnitAction(UnitActionType.MOVE, id, targetPosition);
                 }
                 else 
@@ -90,6 +97,7 @@ namespace Blitz2020
             }
             else if (state == State.RETURN)
             {
+                samePositionCtr = 0;
                 if (targetPosition.isOccupied(message) || lastPosition.Equals(a.position))
                 {
                     List<Position> available = MapManager.getMineableTileNotOccupied(message, basePosition);
@@ -110,6 +118,7 @@ namespace Blitz2020
             }
             else if (state == State.WAITTING)
             {
+                samePositionCtr = 0;
                 return new UnitAction(UnitActionType.NONE, id, basePosition);
             }
 

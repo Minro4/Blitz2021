@@ -61,6 +61,29 @@ namespace Blitz2021
         }
 
 
+        public static Map.Position findAvailablePosition(Map.Position currentPosition, List<Map.Position> availableTile) 
+        {
+            int min = 0;
+            int distance = 0;
+            
+            if (availableTile.Count >0) 
+            {
+                distance = path(currentPosition, availableTile[0]);
+            }
+
+            for (int x = 0; x < availableTile.Count; x++)
+            {
+                if (path(currentPosition, availableTile[x]) < distance )
+                {
+                    min = x;
+                    distance = path(currentPosition, availableTile[x]);
+                }
+            }
+
+            return availableTile[min];
+
+        }
+
 
 
     }
