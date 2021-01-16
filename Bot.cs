@@ -43,13 +43,14 @@ namespace Blitz2020
 
             mapManager.getAllMine(gameMessage.map);
 
-            minerMan.setMiners(myCrew.units.Where(Unit=>Unit.type == 0).ToList());
+            minerMan.setMiners(myCrew.units.Where(Unit => Unit.type == 0).ToList());
             minerMan.setAvailableMiningSpots(mapManager.getAllMineNotOccupied(gameMessage));
 
-            actions.AddRange(minerMan.getActions(gameMessage,mapManager.Mines.Select(mine=> mine.Mines).ToList()));
+            actions.AddRange(minerMan.getActions(gameMessage, mapManager.Mines.Select(mine => mine.Mines).ToList()));
 
             actions.AddRange(baseManager.update(gameMessage));
             actions.AddRange(cartManager.updateCart(gameMessage, minerMan, mapManager));
+
             return new GameCommand(actions);
         }
 

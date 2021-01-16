@@ -11,10 +11,9 @@ using static Blitz2021.Map;
 
 public class MapManager
 {
-
     public List<Mine> Mines;
 
-    public MapManager() 
+    public MapManager()
     {
         Mines = new List<Mine>();
     }
@@ -25,16 +24,17 @@ public class MapManager
         int mapSize = map.getMapSize();
         List<Mine> Mines = new List<Mine>();
         for (int x = 0; x < mapSize; x++)
-            for (int y = 0; y < mapSize; y++)
+        for (int y = 0; y < mapSize; y++)
+        {
+            Position position = new Position(x, y);
+            if (map.getTileTypeAt(position) == TileType.MINE)
             {
-                Position position = new Position(x, y);
-                    if (map.getTileTypeAt(position) == TileType.MINE)
-                    {
-                        Mines.Add(new Mine(x,y, getMineableTile(map, position)));
-                    }
+                Mines.Add(new Mine(x, y, getMineableTile(map, position)));
             }
-       this.Mines = Mines;
-       return Mines;
+        }
+
+        this.Mines = Mines;
+        return Mines;
     }
 
     public List<Position> getAllMineNotOccupied(GameMessage message)
@@ -48,20 +48,21 @@ public class MapManager
             Position position = new Position(x, y);
             if (map.getTileTypeAt(position) == TileType.MINE)
             {
-                var  mineableTiles = getMineableTile(map, position);
+                var mineableTiles = getMineableTile(map, position);
                 var unocc = mineableTiles.Where((mineableTile) => !mineableTile.isOccupied(message));
                 pos.AddRange(unocc);
             }
         }
+
         return pos;
     }
 
-    public List<Position> getMineableTile(Map map, Position P) 
+    public List<Position> getMineableTile(Map map, Position P)
     {
         int mapSize = map.getMapSize();
         List<Position> adjasentTile = new List<Position>();
 
-        if (P.x + 1 < mapSize) 
+        if (P.x + 1 < mapSize)
         {
             if (testCell(map, P.x + 1, P.y))
                 adjasentTile.Add(new Position(P.x + 1, P.y));
@@ -70,25 +71,25 @@ public class MapManager
         if (P.x - 1 > 0)
         {
             if (testCell(map, P.x - 1, P.y))
-            adjasentTile.Add(new Position(P.x - 1, P.y));
+                adjasentTile.Add(new Position(P.x - 1, P.y));
         }
 
         if (P.y + 1 < mapSize)
         {
-            if (testCell(map, P.x + 1, P.y+1))
-            adjasentTile.Add(new Position(P.x, P.y+1));
+            if (testCell(map, P.x, P.y + 1))
+                adjasentTile.Add(new Position(P.x, P.y + 1));
         }
 
         if (P.y - 1 > 0)
         {
-            if (testCell(map, P.x - 1, P.y-1))
-            adjasentTile.Add(new Position(P.x, P.y-1));
+            if (testCell(map, P.x, P.y - 1))
+                adjasentTile.Add(new Position(P.x, P.y - 1));
         }
 
-        return adjasentTile;        
+        return adjasentTile;
     }
 
-    private bool testCell(Map map, int x, int y) 
+    private bool testCell(Map map, int x, int y)
     {
         Position P = new Position(x, y);
 
@@ -96,14 +97,14 @@ public class MapManager
         {
             return true;
         }
-        else 
+        else
         {
             return false;
         }
     }
 
 
-    private bool isMineable(TileType tileType) 
+    private bool isMineable(TileType tileType)
     {
         switch (tileType)
         {
@@ -123,14 +124,12 @@ public class MapManager
 
 public class Mine
 {
-    
     public Position Mines;
     public List<Position> Mineable;
+
     public Mine(int x, int y, List<Position> Mineable)
     {
-        this.Mines = new Position(x,y);
+        this.Mines = new Position(x, y);
         this.Mineable = Mineable;
     }
-
 }
-
