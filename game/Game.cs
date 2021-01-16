@@ -1,10 +1,12 @@
 using System;
+using System.Linq;
+using Blitz2020;
 
 namespace Blitz2021
 {
     public class Map
     {
-        public class Position
+        public class Position : IComparable
         {
             public Position(int x, int y)
             {
@@ -17,6 +19,21 @@ namespace Blitz2021
             public override string ToString()
             {
                 return string.Format("P({0},{1})", this.x, this.y);
+            }
+
+            public int CompareTo(object obj) {
+                if (obj == null) return 1;
+
+                Position other = obj as Position;
+                if (other != null)
+                    return 0;
+                else
+                    throw new ArgumentException("Object is not a Temperature");
+            }
+            public bool isOccupied(GameMessage message)
+            {
+                var positions =  message.crews.SelectMany((crew) => crew.units).Select((unit) => unit.position);
+                return positions.Contains(this);
             }
         }
 

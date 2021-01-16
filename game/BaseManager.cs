@@ -43,6 +43,8 @@ namespace Blitz2021
 
             var carts = crew.get(Unit.UnitType.CART);
 
+            if (carts.Count == 0)
+                return totalCost / 0.01;
             return totalCost / (carts.Count * 25);
         }
     }
