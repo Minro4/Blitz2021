@@ -29,25 +29,31 @@ namespace Blitz2020
             var travelingChariots = chariots.Where(chariot => chariot.state == Chariot.State.TRAVEL).ToList();
             var availableMiners = miners.Where(miner =>
             {
-                return travelingChariots.Find(
-                    chariot => chariot.targerPickUp.Equals(miner.position)) == null;
+                var travelingTo = travelingChariots.Where(chariot => chariot.targerPickUp.Equals(miner.position)).ToList();
+                var dist = Pathfinding.path(message.getMyCrew().homeBase, miner.position).Count * 2;
+                var minerFutureGold = miner.blitzium + dist;
+                minerFutureGold -= travelingTo.Count * 25;
+                miner.futureGold = minerFutureGold;
+                return minerFutureGold > 0;
             }).ToList();
             availableMiners = availableMiners.Where(miner =>
             {
                 return MapManager.getMineableTile(message.map, miner.position).Where(position => !position.isOccupied(message)).Count() != 0;
             }).ToList();
 
-            var sortedMiners = availableMiners.OrderBy(o => -o.blitzium).ToList();
+            var sortedMiners = availableMiners.OrderBy(o => -o.futureGold).ToList();
 
             var waitingChariots = chariots.Where(chariot => chariot.isWaitting()).ToList();
 
             for (int i = 0; i < waitingChariots.Count() && i < sortedMiners.Count; i++)
             {
+
                 var targetPosition = MapManager.getMineableTile(message.map, sortedMiners[i].position).Where(position => !position.isOccupied(message)).ToList();
                 waitingChariots[i].setGoal(targetPosition[0], sortedMiners[i].position);
             }
 
             return chariots.Select(chariot => chariot.selectAction(chariot.findChariot(karts),message)).ToList();
+
         }
 
         private void cleanCarts(List<Unit> karts, GameMessage message)
