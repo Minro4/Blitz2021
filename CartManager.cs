@@ -28,6 +28,10 @@ namespace Blitz2020
         {
             var karts = message.getMyCrew().get(Unit.UnitType.CART);
             cleanCarts(karts, message);
+            foreach (Chariot chariot in chariots)
+            {
+                chariot.updateState(message);
+            }
 
             List<Unit> miners = minersManager.getMiningMiners();
             List<Depot> depots = message.map.depots.ToList();
@@ -70,7 +74,7 @@ namespace Blitz2020
         {
             //Remove dead chariots
             chariots = chariots.Where(chariot => { return karts.Find(kart => kart.id == chariot.id) != null; }).ToList();
-            
+
             //Add new chariots
             var newKarts = karts.Where((kart) => { return chariots.Find((chariot) => chariot.id == kart.id) == null; })
                 .ToList();

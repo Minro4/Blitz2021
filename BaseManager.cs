@@ -43,10 +43,20 @@ namespace Blitz2021
         {
             var actions = new List<GameCommand.Action>();
             Crew crew = message.getMyCrew();
+            var miners = crew.get(Unit.UnitType.MINER);
 
             var minerEfficiency = this.minerEfficiency(message);
 
-            if (minerEfficiency > 1)
+            if (!spawnedOutlaw && minerEfficiency < 1 && miners.Count >= 2)
+            {
+                if (crew.blitzium >= crew.prices.OUTLAW)
+                {
+                    var action = new BuyAction(Unit.UnitType.OUTLAW);
+                    actions.Add(action);
+                    spawnedOutlaw = true;
+                }
+            }
+            else if (minerEfficiency > 1)
             {
                 if (crew.blitzium >= crew.prices.CART)
                 {
@@ -72,17 +82,7 @@ namespace Blitz2021
                     }
                 }
             }
-
-            if (actions.Count == 0)
-            {
-                if (!spawnedOutlaw && crew.blitzium >= crew.prices.OUTLAW)
-                {
-                    var action = new BuyAction(Unit.UnitType.OUTLAW);
-                    actions.Add(action);
-                    spawnedOutlaw = true;
-                }
-            }
-
+            
             return actions;
         }
 
