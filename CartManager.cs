@@ -39,7 +39,7 @@ namespace Blitz2020
             var travelingChariots = chariots.Where(chariot => chariot.state == Chariot.State.TRAVEL).ToList();
 
             var ressources = miners.Select(Ressource.fromMiner).ToList();
-            ressources.AddRange(depots.Select(Ressource.fromDepot));
+            //ressources.AddRange(depots.Select(Ressource.fromDepot));
 
             var availableRessources = ressources.Where(ressource =>
             {
