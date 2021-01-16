@@ -44,6 +44,6 @@ namespace Blitz2021
         public Position target;
         
         //Custom
-        public int futureGold;
+        public double value;
     }
 }

@@ -12,6 +12,8 @@ namespace Blitz2020
 {
     class CartManager
     {
+        private readonly double distanceValueMultiplier = 1;
+        
         List<Chariot> chariots;
 
         public CartManager()
@@ -30,10 +32,10 @@ namespace Blitz2020
             var availableMiners = miners.Where(miner =>
             {
                 var travelingTo = travelingChariots.Where(chariot => chariot.targerPickUp.Equals(miner.position)).ToList();
-                var dist = Pathfinding.path(message.getMyCrew().homeBase, miner.position).Count * 2;
+                var dist = Pathfinding.path(message.getMyCrew().homeBase, miner.position).Count * distanceValueMultiplier;
                 var minerFutureGold = miner.blitzium + dist;
                 minerFutureGold -= travelingTo.Count * 25;
-                miner.futureGold = minerFutureGold;
+                miner.value = minerFutureGold;
                 return minerFutureGold > 0;
             }).ToList();
             availableMiners = availableMiners.Where(miner =>
@@ -41,7 +43,7 @@ namespace Blitz2020
                 return mapManager.getMineableTile(message.map, miner.position).Where(position => !position.isOccupied(message)).Count() != 0;
             }).ToList();
 
-            var sortedMiners = availableMiners.OrderBy(o => -o.futureGold).ToList();
+            var sortedMiners = availableMiners.OrderBy(o => -o.value).ToList();
 
             var waitingChariots = chariots.Where(chariot => chariot.isWaitting()).ToList();
 
