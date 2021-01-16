@@ -57,7 +57,24 @@ public class MapManager
         return pos;
     }
 
-    public List<Position> getMineableTile(Map map, Position P)
+    public List<Position> getMineableTileNotOccupied(GameMessage message, Position P) 
+    {
+        List<Position> tiles = this.getMineableTile(message.map, P);
+        List<Position> freeTiles = new List<Position>();
+
+        for (int x = 0; x < tiles.Count; x++) 
+        {
+            if (!tiles[x].isOccupied(message)) 
+            {
+                freeTiles.Add(tiles[x]);
+            }
+                
+        }
+
+        return freeTiles;
+    }
+
+    public List<Position> getMineableTile(Map map, Position P) 
     {
         int mapSize = map.getMapSize();
         List<Position> adjasentTile = new List<Position>();
