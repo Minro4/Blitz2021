@@ -44,5 +44,24 @@ namespace Blitz2021
             }
             return 99999;
         }
+
+
+        public static bool isAnyPathAvailable(Map.Position currentPosition, List<Map.Position> availableTile) 
+        {
+
+            for (int x=0; x < availableTile.Count; x++) 
+            {
+                if (path(currentPosition, availableTile[x]) < 1000) 
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
+
+
     }
 }
