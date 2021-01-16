@@ -39,7 +39,7 @@ namespace Blitz2020
 			}
 			return action;
 		}
-		public estPerimetre(Position kartPosition, Position target) {
+		public bool estPerimetre(Position kartPosition, Position target) {
 			bool answer=false;
 			int distanceX =Math.Abs( kartPosition.x - target.x);
 			int distanceY = Math.Abs(kartPosition.y - target.y);
