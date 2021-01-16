@@ -10,18 +10,17 @@ namespace Blitz2021
     public class BaseManager
     {
         private MapManager mapManager;
+        private MinerManager minerManager;
 
-        public BaseManager(MapManager mapManager)
+        public BaseManager(MapManager mapManager, MinerManager minerManager)
         {
             this.mapManager = mapManager;
+            this.minerManager = minerManager;
         }
 
-        public void update(List<GameCommand.Action> actions, GameMessage message)
+        public List<GameCommand.Action> update(GameMessage message)
         {
-            if (message.tick < message.totalTick / 2)
-            {
-                expentionStrat(actions,message);
-            }
+            return expentionStrat(message);
         }
 
         public double minerEfficiency(GameMessage message)
@@ -39,8 +38,9 @@ namespace Blitz2021
             return (double) totalCost / (carts.Count * 25);
         }
 
-        public void expentionStrat(List<GameCommand.Action> actions, GameMessage message)
+        public List<GameCommand.Action> expentionStrat(GameMessage message)
         {
+            var actions = new List<GameCommand.Action>();
             Crew crew = message.getMyCrew();
 
             var minerEfficiency = this.minerEfficiency(message);
@@ -50,12 +50,19 @@ namespace Blitz2021
                 if (crew.blitzium >= crew.prices.CART)
                 {
                     var availableMines = mapManager.getAllMineNotOccupied(message);
-                    if (availableMines.Count > 0)
+                    var mineDistances = availableMines.Select(pos => Pathfinding.path(pos, crew.homeBase).Count).ToList();
+                    if (mineDistances.Count > minerManager.getMovingMiners().Count)
                     {
-                        var action = new BuyAction(Unit.UnitType.CART);
-                        actions.Add(action);
+                        var bestMineDist = mineDistances.Min();
+                        var tickLeft = message.totalTick - message.tick;
+                        if ((tickLeft - bestMineDist) > message.getMyCrew().prices.MINER)
+                        {
+                            var action = new BuyAction(Unit.UnitType.CART);
+                            actions.Add(action);
+                        }
                     }
                 }
+              
             }
             else
             {
@@ -65,6 +72,13 @@ namespace Blitz2021
                     actions.Add(action);
                 }
             }
+
+            return actions;
+        }
+
+        public int growthRate()
+        {
+            return this.minerManager.getMiningMiners().Count;
         }
     }
 }
