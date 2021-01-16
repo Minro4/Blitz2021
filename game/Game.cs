@@ -6,7 +6,7 @@ namespace Blitz2021
 {
     public class Map
     {
-        public class Position : IComparable
+        public class Position
         {
             public Position(int x, int y)
             {
