@@ -41,5 +41,6 @@ namespace Blitz2021
         public Position position;
         public List<Position> path;
         public bool isMoving;
+        public Position target;
     }
 }

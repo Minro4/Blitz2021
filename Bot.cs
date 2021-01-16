@@ -36,21 +36,17 @@ namespace Blitz2020
         */
         public GameCommand nextMove(GameMessage gameMessage)
         {
+            List<GameCommand.Action> actions = new List<GameCommand.Action>();
             Crew myCrew = gameMessage.getCrewsMapById[gameMessage.crewId];
             int mapSize = gameMessage.map.getMapSize();
 
 
             mapManager.getAllMine(gameMessage.map);
 
-            if (!firstPass)
-            {
-                minerMan.addMiner(myCrew.units[0]);
-                firstPass = true;
-            }
-
+            minerMan.setMiners(myCrew.units.Where(Unit=>Unit.type == 0).ToList());
             minerMan.setAvailableMiningSpots(mapManager.Mines.SelectMany((mine => mine.Mineable)).ToList());
 
-            List<GameCommand.Action> actions = minerMan.getActions(gameMessage);
+            actions.AddRange(minerMan.getActions(gameMessage,mapManager.Mines.Select(mine=> mine.Mines).ToList()));
 
             actions.AddRange(baseManager.update(gameMessage));
             actions.AddRange(cartManager.updateCart(gameMessage, minerMan, mapManager));
