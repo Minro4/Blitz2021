@@ -39,7 +39,8 @@ namespace Blitz2021
         {
             Crew crew = message.getMyCrew();
             var miners = crew.get(Unit.UnitType.MINER);
-            var distances = miners.Select((Unit miner) => Pathfinding.path(crew.homeBase, miner.position));
+            var distances = miners.Select((Unit miner) => Pathfinding.bestPos(message, crew.homeBase, miner.position)).Where(t => t != null)
+                .Select(d => d.Item2);
             var timeCosts = distances.Select(distance => distance * 2);
             var totalCost = timeCosts.Aggregate(0, (acc, x) => acc + x);
 
@@ -80,12 +81,12 @@ namespace Blitz2021
                 if (crew.blitzium >= crew.prices.MINER + miniumBank)
                 {
                     var availableMines = mapManager.getAllMineNotOccupied(message);
-                    var mineDistances = availableMines.Select(pos => Pathfinding.path(pos, crew.homeBase)).ToList();
+                    var mineDistances = availableMines.Select(pos => Pathfinding.path(pos, crew.homeBase)).Where(d => d != Pathfinding.infinity).ToList();
                     if (mineDistances.Count > minerManager.getMovingMiners().Count)
                     {
                         var bestMineDist = mineDistances.Min();
                         var tickLeft = message.totalTick - message.tick;
-                        if ((tickLeft - bestMineDist) > message.getMyCrew().prices.MINER + message.getMyCrew().prices.CART)
+                        if ((tickLeft - (bestMineDist * 3)) > message.getMyCrew().prices.MINER + message.getMyCrew().prices.CART)
                         {
                             var action = new BuyAction(Unit.UnitType.MINER);
                             actions.Add(action);

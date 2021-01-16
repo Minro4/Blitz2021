@@ -44,33 +44,34 @@ namespace Blitz2020
                 var ressources = miners.Select(Ressource.fromMiner).ToList();
                 //ressources.AddRange(depots.Select(Ressource.fromDepot));
 
-                var availableRessources = ressources.Where(ressource =>
+                var availableResources = ressources.Where(resource =>
                 {
-                    var travelingTo = travelingChariots.Where(chariot => chariot.targerPickUp.Equals(ressource.position)).ToList();
-                    var dist = Pathfinding.path(message.getMyCrew().homeBase, ressource.position);
-                    var adjustedGold = Math.Min(ressource.blitzium, quantityStackCap) - (ressource.isPublic ? isPublicPenalty : 0);
-                    var minerFutureGold = adjustedGold + dist * ressource.growth;
+                    var travelingTo = travelingChariots.Where(chariot => chariot.targerPickUp.Equals(resource.position)).ToList();
+                    var dist = Pathfinding.bestPos(message, message.getMyCrew().homeBase, resource.position);
+                    if (dist == null)
+                        return false;
+
+                    resource.bestAdjPos = dist.Item1;
+                    resource.distToBestAdj = dist.Item2;
+                    var adjustedGold = Math.Min(resource.blitzium, quantityStackCap) - (resource.isPublic ? isPublicPenalty : 0);
+                    var minerFutureGold = adjustedGold + resource.distToBestAdj * resource.growth;
                     minerFutureGold -= travelingTo.Count * 25;
-                    ressource.value = minerFutureGold - ((double) dist / far * distanceValueDiminisher);
+                    resource.value = minerFutureGold - ((double) resource.distToBestAdj / far * distanceValueDiminisher);
                     return minerFutureGold > 0;
                 }).ToList();
-                availableRessources = availableRessources.Where(miner =>
+                availableResources = availableResources.Where(miner =>
                 {
                     return MapManager.getMineableTile(message.map, miner.position).Where(position => !position.isOccupied(message)).Count() != 0;
                 }).ToList();
 
-                var sortedRessources = availableRessources.OrderBy(o => -o.value).ToList();
+                var sortedResources = availableResources.OrderBy(o => -o.value).ToList();
 
                 var waitingChariots = chariots.Where(chariot => chariot.isWaitting()).ToList();
 
-                for (int i = 0; i < waitingChariots.Count() && i < sortedRessources.Count; i++)
+                for (int i = 0; i < waitingChariots.Count() && i < sortedResources.Count; i++)
                 {
-                    var targetPosition = MapManager.getMineableTile(message.map, sortedRessources[i].position).Where(position => !position.isOccupied(message))
-                        .ToList();
-
                     var cartPos = waitingChariots[i].findChariot(karts).position;
-                    targetPosition = targetPosition.OrderBy(p => Pathfinding.path(cartPos, p)).ToList();
-                    waitingChariots[i].setGoal(targetPosition[0], sortedRessources[i]);
+                    waitingChariots[i].setGoal(sortedResources[i].bestAdjPos, sortedResources[i]);
                 }
 
                 return chariots.Select(chariot => chariot.selectAction(chariot.findChariot(karts), message)).ToList();
@@ -104,6 +105,9 @@ namespace Blitz2020
         public int growth;
         public bool isPublic;
         public double value;
+
+        public Position bestAdjPos;
+        public int distToBestAdj;
 
         public static Ressource fromMiner(Unit miner)
         {
