@@ -84,6 +84,7 @@ namespace Blitz2020
                 }
                 else 
                 {
+                    lastPosition = a.position;
                     return new UnitAction(UnitActionType.MOVE, id, targetPosition);
                 }
             }
