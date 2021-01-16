@@ -54,7 +54,16 @@ namespace Blitz2021
                             if (outlaws.Count > 0)
                             {
                                 var outlaw = outlaws[0];
-                                miner.target = outlaw.position;
+                                var notOcc = MapManager.getMineableTileNotOccupied(gameMessage, outlaw.position);
+                                if (notOcc.Count > 0)
+                                {
+                                    miner.target = notOcc[0];
+                                }
+                                else
+                                {
+                                    miner.target = Blitz2020.Bot.getRandomPosition(gameMessage.map.getMapSize());
+                                    miner.inactivity = 0;
+                                }
                             }
                             else
                             {
