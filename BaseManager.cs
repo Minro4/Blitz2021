@@ -12,7 +12,6 @@ namespace Blitz2021
         private MapManager mapManager;
         private MinerManager minerManager;
         private bool spawnedOutlaw = false;
-        private bool spawnMinerNext;
         private int miniumBank = 0;
 
         public BaseManager(MapManager mapManager, MinerManager minerManager)
@@ -94,15 +93,6 @@ namespace Blitz2021
                             actions.Add(action);
                         }
                     }
-                    else if (spawnMinerNext)
-                    {
-                        if (tickLeft > 250)
-                        {
-                            var action = new BuyAction(Unit.UnitType.MINER);
-                            actions.Add(action);
-                            spawnMinerNext = false;
-                        }
-                    }
                 }
             }
 
@@ -133,7 +123,6 @@ namespace Blitz2021
                 if (spawnedOutlaw && message.getMyCrew().blitzium >= 50 && tickLeft >= 150)
                 {
                     miniumBank = 50;
-                    spawnMinerNext = true;
                     return true;
                 }
 
