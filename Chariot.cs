@@ -34,6 +34,7 @@ namespace Blitz2020
         {
             this.targerPickUp = targetPickUp;
             this.targetPosition = targetPosition;
+            state = State.TRAVEL;
         }
 
         public bool isWaitting()

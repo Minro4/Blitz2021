@@ -27,8 +27,11 @@ namespace Blitz2020
             List<Unit> miners = minersManager.getMiningMiners();
 
             var travelingChariots = chariots.Where(chariot => chariot.state == Chariot.State.TRAVEL).ToList();
-            var availableMiners = miners.Where(miner => { return travelingChariots.Find(
-                chariot => chariot.targerPickUp.Equals(miner.position)) == null; });
+            var availableMiners = miners.Where(miner =>
+            {
+                return travelingChariots.Find(
+                    chariot => chariot.targerPickUp.Equals(miner.position)) == null;
+            }).ToList();
             /*availableMiners = availableMiners.Where(miner =>
             {
                 return mapManager.getMineableTile(message.map, miner.position).Where(position => position.isOccupied(message)).Count() != 0;
@@ -38,7 +41,7 @@ namespace Blitz2020
 
             var waitingChariots = chariots.Where(chariot => chariot.isWaitting()).ToList();
 
-            for (int i = 0; i < waitingChariots.Count() || i < sortedMiners.Count; i++)
+            for (int i = 0; i < waitingChariots.Count() && i < sortedMiners.Count; i++)
             {
                 var targetPosition = mapManager.getMineableTile(message.map, sortedMiners[i].position);
                 waitingChariots[i].setGoal(targetPosition[0], sortedMiners[i].position);
@@ -53,7 +56,10 @@ namespace Blitz2020
             chariots = chariots.Where(chariot => { return karts.Find(kart => kart.id == chariot.id) != null; }).ToList();
 
             //Add new chariots
-            var newKarts = message.getMyCrew().get(Unit.UnitType.CART).Where((kart) => { return chariots.Find((chariot) => chariot.id == kart.id) != null; })
+            var newKarts = karts.Where((kart) =>
+                {
+                    return chariots.Find((chariot) => chariot.id == kart.id) == null;
+                })
                 .ToList();
 
             var newChariots = newKarts.Select(kart => new Chariot(kart.id, message.getMyCrew().homeBase));
