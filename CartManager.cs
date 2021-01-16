@@ -40,7 +40,7 @@ namespace Blitz2020
             }).ToList();
             availableMiners = availableMiners.Where(miner =>
             {
-                return mapManager.getMineableTile(message.map, miner.position).Where(position => !position.isOccupied(message)).Count() != 0;
+                return MapManager.getMineableTile(message.map, miner.position).Where(position => !position.isOccupied(message)).Count() != 0;
             }).ToList();
 
             var sortedMiners = availableMiners.OrderBy(o => -o.value).ToList();
@@ -49,12 +49,13 @@ namespace Blitz2020
 
             for (int i = 0; i < waitingChariots.Count() && i < sortedMiners.Count; i++)
             {
-                var targetPosition = mapManager.getMineableTile(message.map, sortedMiners[i].position).Where(position => !position.isOccupied(message))
-                    .ToList();
+
+                var targetPosition = MapManager.getMineableTile(message.map, sortedMiners[i].position).Where(position => !position.isOccupied(message)).ToList();
                 waitingChariots[i].setGoal(targetPosition[0], sortedMiners[i].position);
             }
 
-            return chariots.Select(chariot => chariot.selectAction(chariot.findChariot(karts), message, mapManager)).ToList();
+            return chariots.Select(chariot => chariot.selectAction(chariot.findChariot(karts),message)).ToList();
+
         }
 
         private void cleanCarts(List<Unit> karts, GameMessage message)
