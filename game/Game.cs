@@ -21,15 +21,19 @@ namespace Blitz2021
                 return string.Format("P({0},{1})", this.x, this.y);
             }
 
-            public int CompareTo(object obj) {
-                if (obj == null) return 1;
-
-                Position other = obj as Position;
-                if (other != null)
-                    return 0;
-                else
-                    throw new ArgumentException("Object is not a Temperature");
+            public override bool Equals(Object obj)
+            {
+                //Check for null and compare run-time types.
+                if ((obj == null) || ! this.GetType().Equals(obj.GetType()))
+                {
+                    return false;
+                }
+                else {
+                    Position p = (Position) obj;
+                    return (x == p.x) && (y == p.y);
+                }
             }
+            
             public bool isOccupied(GameMessage message)
             {
                 var positions =  message.crews.SelectMany((crew) => crew.units).Select((unit) => unit.position);
