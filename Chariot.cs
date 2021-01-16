@@ -62,7 +62,7 @@ namespace Blitz2020
             }
             else if (state == State.RETURN)
             {
-                if (targetPosition.Equals(a.position))
+                if (targetPosition.Equals(a.position) || Pathfinding.path(a.position, basePosition).Count == 1)
                 {
                     state = State.WAITTING;
                     return new UnitAction(UnitActionType.DROP, id, basePosition);
