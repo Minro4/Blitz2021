@@ -38,6 +38,11 @@ namespace Blitz2020
             return getCrewById(crewId);
         }
 
+        public List<Crew> getOtherCrews()
+        {
+            return crews.Where(x => x.id != crewId).ToList();
+        }
+
         public Crew getCrewById(string id)
         {
             return crews.Find((crew) => id.Equals(crew.id));
@@ -47,6 +52,7 @@ namespace Blitz2020
         public Crew getBestCrew() 
         {
             Crew bestOtherCrew = null;
+
             bool start = true;
             for (int x = 0; x < crews.Count; x++)
             {
@@ -58,7 +64,7 @@ namespace Blitz2020
                         start = false;
                     }
 
-                    if (bestOtherCrew.totalBlitzium < crews[x].totalBlitzium)
+                    if (bestOtherCrew.potential(this) < crews[x].potential(this))
                     {
                         bestOtherCrew = crews[x];
                     }

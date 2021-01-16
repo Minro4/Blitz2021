@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Blitz2020;
 using static Blitz2021.Map;
 
 namespace Blitz2021
@@ -26,13 +27,21 @@ namespace Blitz2021
         {
             return units.Where((unit) => type == unit.type).ToList();
         }
+
+        public int potential(GameMessage message)
+        {
+            var tickLeft = message.totalTick - message.tick;
+            return blitzium + get(Unit.UnitType.MINER).Count * tickLeft;
+        }
     }
 
     public class Unit
     {
         public enum UnitType
         {
-            MINER, CART, OUTLAW
+            MINER,
+            CART,
+            OUTLAW
         }
 
         public string id;
@@ -43,7 +52,7 @@ namespace Blitz2021
         public bool isMoving;
         public Position target;
         public int inactivity;
-        
+
         //Custom
         public double value;
     }

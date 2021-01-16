@@ -114,16 +114,34 @@ namespace Blitz2021
 
         public bool timeToKill(GameMessage message)
         {
+            var crewNbr = message.crews.Count;
             var tickLeft = message.totalTick - message.tick;
-            var percent = (double) message.tick / message.totalTick;
-            if (spawnedOutlaw && message.getMyCrew().blitzium >= 50 && tickLeft >= 100)
-            {
-                miniumBank = 50;
-                return true;
-            }
 
-            miniumBank = 0;
-            return false;
+            if (crewNbr <= 2)
+            {
+                if (spawnedOutlaw && message.getMyCrew().blitzium >= 50 && tickLeft >= 150)
+                {
+                    miniumBank = 50;
+                    return true;
+                }
+
+                miniumBank = 0;
+                return false;
+            }
+            else
+            {
+                var otherBestPotential = message.getOtherCrews().Select(c => c.potential(message)).Max();
+                var ourPotential = message.getMyCrew().potential(message);
+
+                if (spawnedOutlaw && message.getMyCrew().blitzium >= 50 && tickLeft >= 250 && (otherBestPotential * 1) > ourPotential)
+                {
+                    miniumBank = 50;
+                    return true;
+                }
+
+                miniumBank = 0;
+                return false;
+            }
         }
     }
 }
