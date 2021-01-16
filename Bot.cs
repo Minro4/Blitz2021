@@ -61,6 +61,7 @@ namespace Blitz2020
             catch (Exception ex)
             {
                 Console.WriteLine("throw: " + ex);
+                Console.WriteLine("Trace: " + ex.StackTrace);
                 return new GameCommand(new List<GameCommand.Action>());
             }
         }
