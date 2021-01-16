@@ -47,7 +47,7 @@ namespace Blitz2020
         //Verifies if desired depot was taken
         public void updateState(GameMessage message)
         {
-            if (ressource.isPublic && state == State.TRAVEL)
+            if (ressource != null && ressource.isPublic && state == State.TRAVEL)
             {
                 var depot = message.map.depots.ToList().Find(depot => depot.position.Equals(ressource.position));
                 if (depot == null || depot.blitzium == 0)
