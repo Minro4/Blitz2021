@@ -8,71 +8,77 @@ using static Blitz2021.Map;
 
 namespace Blitz2020
 {
+    public class Chariot
+    {
+        public string id;
+        public State state;
+        public Position targetPosition;
+        public Position targerPickUp;
+        public Position basePosition;
 
-	public class Chariot
-	{
-		public string id;
-		public State state;
-		public Position targetPosition;
-		public Position targerPickUp;
-		public Position basePosition;
+        public enum State
+        {
+            TRAVEL,
+            RETURN,
+            WAITTING
+        }
 
-		public enum State
-		{
-			TRAVEL, RETURN,WAITTING
-		}
+        public Chariot(string id, Position basePosition)
+        {
+            this.id = id;
+            this.basePosition = basePosition;
+            this.state = State.WAITTING;
+        }
 
-		public Chariot(string id, Position basePosition) {
-			this.id = id;
-			this.basePosition = basePosition;
-			this.state = State.WAITTING;
-		}
+        public void setGoal(Position targetPosition, Position targetPickUp)
+        {
+            this.targerPickUp = targetPickUp;
+            this.targetPosition = targetPosition;
+        }
 
-		public void setGoal(Position targetPosition, Position targetPickUp) 
-		{
-			this.targerPickUp = targetPickUp;
-			this.targetPosition = targetPosition;
-		}
+        public bool isWaitting()
+        {
+            return state == State.WAITTING;
+        }
 
-		public bool isWaitting() 
-		{
-			return state == State.WAITTING;
-		}
+        public UnitAction selectAction(Unit a)
+        {
+            if (state == State.TRAVEL)
+            {
+                if (targetPosition.Equals(a.position))
+                {
+                    state = State.RETURN;
+                    targetPosition = new Position(basePosition.x + 1, basePosition.y);
+                    return new UnitAction(UnitActionType.PICKUP, id, targerPickUp);
+                }
+                else
+                {
+                    return new UnitAction(UnitActionType.MOVE, id, targetPosition);
+                }
+            }
+            else if (state == State.RETURN)
+            {
+                if (targetPosition.Equals(a.position))
+                {
+                    state = State.WAITTING;
+                    return new UnitAction(UnitActionType.DROP, id, basePosition);
+                }
+                else
+                {
+                    return new UnitAction(UnitActionType.MOVE, id, targetPosition);
+                }
+            }
+            else if (state == State.WAITTING)
+            {
+                return new UnitAction(UnitActionType.NONE, id, basePosition);
+            }
 
-		public UnitAction selectAction(Unit a)
-		{
-			if (state == State.TRAVEL)
-			{
-				if (targetPosition.Equals(a.position))
-				{
-					state = State.RETURN;
-					targetPosition = new Position(basePosition.x + 1, basePosition.y);
-					return new UnitAction(UnitActionType.PICKUP, id, targerPickUp);
-				}
-				else
-				{
-					return new UnitAction(UnitActionType.MOVE, id, targetPosition);
-				}
-			}
-			else if (state == State.RETURN)
-			{
-				if (targetPosition.Equals(a.position))
-				{
-					state = State.WAITTING;
-					return new UnitAction(UnitActionType.DROP, id, basePosition);
-				}
-				else
-				{
-					return new UnitAction(UnitActionType.MOVE, id, targetPosition);
-				}
-			}
-			else if (state == State.WAITTING)
-			{
-				return new UnitAction(UnitActionType.NONE, id, basePosition);
-			}
-			return new UnitAction(UnitActionType.NONE, id, basePosition);
-		}
+            return new UnitAction(UnitActionType.NONE, id, basePosition);
+        }
 
-	}
-
+        public Unit findChariot(List<Unit> karts)
+        {
+            return karts.Find(kart => kart.id == id);
+        }
+    }
 }

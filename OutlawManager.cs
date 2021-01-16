@@ -1,4 +1,7 @@
-﻿$HEADER$namespace $NAMESPACE$
+﻿namespace Blitz2021
 {
-  public class $CLASS$ {$END$}
+    public class OutlawManager
+    {
+        
+    }
 }

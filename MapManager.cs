@@ -56,7 +56,7 @@ public class MapManager
         return pos;
     }
 
-    private List<Position> getMineableTile(Map map, Position P) 
+    public List<Position> getMineableTile(Map map, Position P) 
     {
         int mapSize = map.getMapSize();
         List<Position> adjasentTile = new List<Position>();

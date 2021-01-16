@@ -17,6 +17,7 @@ namespace Blitz2020
         private MinerManager minerMan;
         private MapManager mapManager;
         private BaseManager baseManager;
+        private CartManager cartManager;
         bool firstPass = false;
 
         public Bot()
@@ -24,6 +25,7 @@ namespace Blitz2020
             mapManager = new MapManager();
             minerMan = new MinerManager();
             baseManager = new BaseManager(mapManager, minerMan);
+            cartManager = new CartManager();
         }
 
         /*
@@ -51,7 +53,7 @@ namespace Blitz2020
             List<GameCommand.Action> actions = minerMan.getActions(gameMessage);
 
             actions.AddRange(baseManager.update(gameMessage));
-
+            actions.AddRange(cartManager.updateCart(gameMessage, minerMan, mapManager));
             return new GameCommand(actions);
         }
 

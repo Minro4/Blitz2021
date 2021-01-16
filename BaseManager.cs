@@ -55,7 +55,7 @@ namespace Blitz2021
                     {
                         var bestMineDist = mineDistances.Min();
                         var tickLeft = message.totalTick - message.tick;
-                        if ((tickLeft - bestMineDist) > message.getMyCrew().prices.MINER)
+                        if ((tickLeft - bestMineDist) > message.getMyCrew().prices.MINER * 2)
                         {
                             var action = new BuyAction(Unit.UnitType.CART);
                             actions.Add(action);
