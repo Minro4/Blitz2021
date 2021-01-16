@@ -34,20 +34,21 @@ namespace Blitz2021
                         movingMiners.Add(miner);
                     }
                 }
-
                 miners = movingMiners;
                 actions.AddRange(mine(mines));
-                foreach (Unit miner in miners)
-                {
-                    if (!miner.isMoving)
-                    {
-                        miner.target = availableMiningSpots[getClosestSpotId(miner)];
-                        miner.isMoving = true;
+                foreach (Unit miner in miners){
+                    if (!miner.isMoving){
+                        if (availableMiningSpots.Count > 0 && miner.inactivity < 2){
+                            miner.target = availableMiningSpots[getClosestSpotId(miner)];
+                            miner.isMoving = true;
+                        }
+                        else{
+                            miner.target = Blitz2020.Bot.getRandomPosition(gameMessage.map.getMapSize());
+                            miner.inactivity = 0;
+                        }
                     }
-
-                    actions.Add(new UnitAction(UnitActionType.MOVE, miner.id, miner.target));
+                    actions.Add(new UnitAction(UnitActionType.MOVE, miner.id,miner.target));
                 }
-
                 return actions;
             }
             catch (Exception ex)
@@ -66,7 +67,6 @@ namespace Blitz2021
                     if(miners[i].position.Equals(miner.position)){
                         if (miners[i].inactivity > 2){
                             miners[i].isMoving = false;
-                            miners[i].inactivity = 0;
                         }
                         else{
                             miners[i].inactivity++;

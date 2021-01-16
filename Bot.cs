@@ -67,7 +67,7 @@ namespace Blitz2020
             }
         }
 
-        public Position getRandomPosition(int size)
+        public static Position getRandomPosition(int size)
         {
             Random rand = new Random();
             return new Position(rand.Next(size), rand.Next(size));
