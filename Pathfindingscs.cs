@@ -25,7 +25,7 @@ namespace Blitz2021
                     for (int j= 0; j < gameMessage.map.getMapSize(); j++){
                         Map.Position pos = new Map.Position(i,j);
                         if (gameMessage.map.getTileTypeAt(pos) == TileType.WALL || MapManager.isInsideEnnemieBase(gameMessage,pos)){
-                            grid.
+                            grid.DisconnectNode(new GridPosition(i,j));
                         }
                     }
                 }
@@ -35,11 +35,12 @@ namespace Blitz2021
 
         public static int path(Map.Position p1, Map.Position p2)
         {
-            
+            var path = pathFinder.FindPath(new GridPosition(p1.x,p1.y), new GridPosition(p2.x,p2.y), grid);
 
-
-
-            return 0;
+            if (path.Type == PathType.Complete){
+                return (int)path.Distance.Meters;
+            }
+            return 99999;
         }
     }
 }
