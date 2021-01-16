@@ -14,11 +14,16 @@ namespace Blitz2020
     public class Bot
     {
         public static string NAME = "GUY";
-        MinerManager minerMan;
+        private MinerManager minerMan;
+        private MapManager mapManager;
+        private BaseManager baseManager;
         bool firstPass = false;
+
         public Bot()
         {
+            mapManager = new MapManager();
             minerMan = new MinerManager();
+            baseManager = new BaseManager(mapManager, minerMan);
         }
 
         /*
@@ -32,19 +37,20 @@ namespace Blitz2020
             Crew myCrew = gameMessage.getCrewsMapById[gameMessage.crewId];
             int mapSize = gameMessage.map.getMapSize();
 
-            MapManager mapManager = new MapManager();
+
             mapManager.getAllMine(gameMessage.map);
 
-            if (!firstPass){
+            if (!firstPass)
+            {
                 minerMan.addMiner(myCrew.units[0]);
                 firstPass = true;
             }
+
             minerMan.setAvailableMiningSpots(mapManager.Mines.SelectMany((mine => mine.Mineable)).ToList());
 
             List<GameCommand.Action> actions = minerMan.getActions(gameMessage);
 
-            var baseManager = new BaseManager();
-            baseManager.buy(actions, gameMessage);
+            actions.AddRange(baseManager.update(gameMessage));
 
             return new GameCommand(actions);
         }

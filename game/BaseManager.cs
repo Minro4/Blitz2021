@@ -9,28 +9,18 @@ namespace Blitz2021
 {
     public class BaseManager
     {
-        public void buy(List<GameCommand.Action> actions, GameMessage message)
+        private MapManager mapManager;
+        private MinerManager minerManager;
+
+        public BaseManager(MapManager mapManager, MinerManager minerManager)
         {
-            Crew crew = message.getMyCrew();
+            this.mapManager = mapManager;
+            this.minerManager = minerManager;
+        }
 
-            var minerEfficiency = this.minerEfficiency(message);
-
-            if (minerEfficiency > 1)
-            {
-                if (crew.blitzium >= crew.prices.CART)
-                {
-                    var action = new BuyAction(Unit.UnitType.CART);
-                    actions.Add(action);
-                }
-            }
-            else
-            {
-                if (crew.blitzium >= crew.prices.MINER)
-                {
-                    var action = new BuyAction(Unit.UnitType.MINER);
-                    actions.Add(action);
-                }
-            }
+        public List<GameCommand.Action> update(GameMessage message)
+        {
+            return expentionStrat(message);
         }
 
         public double minerEfficiency(GameMessage message)
@@ -45,7 +35,50 @@ namespace Blitz2021
 
             if (carts.Count == 0)
                 return totalCost / 0.01;
-            return (double)totalCost / (carts.Count * 25);
+            return (double) totalCost / (carts.Count * 25);
+        }
+
+        public List<GameCommand.Action> expentionStrat(GameMessage message)
+        {
+            var actions = new List<GameCommand.Action>();
+            Crew crew = message.getMyCrew();
+
+            var minerEfficiency = this.minerEfficiency(message);
+
+            if (minerEfficiency > 1)
+            {
+                if (crew.blitzium >= crew.prices.CART)
+                {
+                    var availableMines = mapManager.getAllMineNotOccupied(message);
+                    var mineDistances = availableMines.Select(pos => Pathfinding.path(pos, crew.homeBase).Count).ToList();
+                    if (mineDistances.Count > minerManager.getMovingMiners().Count)
+                    {
+                        var bestMineDist = mineDistances.Min();
+                        var tickLeft = message.totalTick - message.tick;
+                        if ((tickLeft - bestMineDist) > message.getMyCrew().prices.MINER)
+                        {
+                            var action = new BuyAction(Unit.UnitType.CART);
+                            actions.Add(action);
+                        }
+                    }
+                }
+              
+            }
+            else
+            {
+                if (crew.blitzium >= crew.prices.MINER)
+                {
+                    var action = new BuyAction(Unit.UnitType.MINER);
+                    actions.Add(action);
+                }
+            }
+
+            return actions;
+        }
+
+        public int growthRate()
+        {
+            return this.minerManager.getMiningMiners().Count;
         }
     }
 }

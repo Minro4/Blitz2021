@@ -48,6 +48,10 @@ namespace Blitz2021
             return miningMiners;
         }
         
+        public List<Unit> getMovingMiners(){
+            return miners;
+        }
+        
         private List<Unit> getAvailableMiners(Blitz2020.GameMessage gameMessage){
             List<Unit> availableMiners = new List<Unit>();
             List<Unit> nextMiners = new List<Unit>();

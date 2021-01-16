@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Blitz2020;
 using Blitz2021;
 using static Blitz2021.GameCommand;
 using static Blitz2021.GameCommand.UnitAction;
@@ -28,17 +30,33 @@ public class MapManager
                 Position position = new Position(x, y);
                     if (map.getTileTypeAt(position) == TileType.MINE)
                     {
-
                         Mines.Add(new Mine(x,y, getMineableTile(map, position)));
-     
                     }
             }
        this.Mines = Mines;
        return Mines;
     }
 
+    public List<Position> getAllMineNotOccupied(GameMessage message)
+    {
+        var map = message.map;
+        int mapSize = map.getMapSize();
+        List<Position> pos = new List<Position>();
+        for (int x = 0; x < mapSize; x++)
+        for (int y = 0; y < mapSize; y++)
+        {
+            Position position = new Position(x, y);
+            if (map.getTileTypeAt(position) == TileType.MINE)
+            {
+                var  mineableTiles = getMineableTile(map, position);
+                var unocc = mineableTiles.Where((mineableTile) => !mineableTile.isOccupied(message));
+                pos.AddRange(unocc);
+            }
+        }
+        return pos;
+    }
 
-    public List<Position> getMineableTile(Map map, Position P) 
+    private List<Position> getMineableTile(Map map, Position P) 
     {
         int mapSize = map.getMapSize();
         List<Position> adjasentTile = new List<Position>();
@@ -70,7 +88,7 @@ public class MapManager
         return adjasentTile;        
     }
 
-    public bool testCell(Map map, int x, int y) 
+    private bool testCell(Map map, int x, int y) 
     {
         Position P = new Position(x, y);
 
@@ -85,7 +103,7 @@ public class MapManager
     }
 
 
-    public bool isMineable(TileType tileType) 
+    private bool isMineable(TileType tileType) 
     {
         switch (tileType)
         {
@@ -101,7 +119,6 @@ public class MapManager
                 return false;
         }
     }
-
 }
 
 public class Mine
